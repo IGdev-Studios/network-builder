@@ -1,0 +1,31 @@
+/* Main */
+#main{
+    display: grid;
+    height: 80vh;
+    grid-template-columns: repeat(2,1fr);
+}
+
+#LigneList,#LigneDetails{
+    margin: 1em;
+    /* overflow: hidden; */
+    /* border: solid gray 5px; */
+    /* border-radius: 50px; */
+}
+
+.Ligne{
+    background-color: whitesmoke;
+    border-top: solid lightgray 1px;
+    display: grid;
+    grid-template-areas: 'L D D B';
+}
+.Ligne:first-of-type{border-top: none;}
+.LigneListId{
+    grid-area: L;
+    align-self: center;
+    justify-self: center;
+    /* height: 100%;
+    width: 100%; */
+}
+.LigneListDest1{grid-area: D;}
+.LigneListDest2{grid-area: A;}
+.LigneListBtns{grid-area: B;display: flex;flex-direction: column;}

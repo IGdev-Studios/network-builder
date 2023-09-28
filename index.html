@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBT</title>
+
+    <!-- Links -->
+    <link rel="stylesheet" href="./res/css/generic.css">
+    <link rel="stylesheet" href="./res/css/index.css">
+</head>
+<!-- IMPORTANT !
+    En fait, ce n'est un pack d'outils différents pour créer un réseau, 
+    c'est pleins de trucs qui vont ensemble et qui sont liés.
+
+    Par exemple, si on ne crée pas de lignes, on ne peux pas créer de plan
+    de ligne avec l'outil "Thèrmomètre" ! (En fait si, y'a toujours une
+    option pour tout faire à la main, mais c'est mieux en auto quand même)
+
+    Même chose pour les horaires ! Une fois générés c'est plus facile
+    d'auto-créer une planchette conducteur
+
+
+-->
+<body>
+    <header>
+        <h1>Network Builder Toolkit</h1>
+        <div id="MainMenuBtn">Menu ◀️</div>
+        <menu id="MainMenu" style="display: none;">
+            <!-- 
+                Menu passe à "Menu ▶️" lors du clic pour toggle.
+                Le menu apparait alors ou disparais
+             -->
+            <div>Ediligne</div>
+            <div>Superplanchette</div>
+            <div>Thermoligne</div>
+        </menu>
+    </header>
+    <main>
+        <p>
+            <!-- Penser à mettre en forme cette description du toolkit -->
+            Bienvenue dans ce pack d'outils utiles à la création de votre/vos réseaux !
+            Ci dessous, les différents outils avec une description et un bouton !
+        </p>
+        <div class="liste">
+            <div class="outil">
+                <h2>nom de l'outil</h2>
+                <p>Description rapide</p>
+                <p>description longue et enuyeuse de l'outil en question</p>
+            </div>
+            <div class="outil">
+                <h2><a href="./ediligne.html">Ediligne</a></h2>
+                <p>L'éditeur de lignes !</p>
+                <p>Créez ici toutes les lignes dont le réseau à besoin, y compris 
+                    les lignes hors-champ (Lignes d'un autre réseau qui passe par 
+                    le vôtre, par ex. Lignes Cars Région, sur le réseau 
+                    <abbr title="Transports de l'Aglomération Grenobloise">TAG</abbr>).</p>
+            </div>
+            <div class="outil">
+                <h2><a href="./superplanchette.html">Superplanchette</a></h2>
+                <p>L'outil pour les planchettes conducteur !</p>
+                <p>Outil de création de planchette conducteur, basées sur le style de HASTUS.
+                    Ces planchettes sont <u>le</u> repère de vos conducteurs, surtout lors
+                    d'une panne de <abbr title="Système d'Aide à l'Exploitation">SAE</abbr>.</p>
+            </div>
+            <div class="outil">
+                <h2><a href="./thermoligne.html">Thermoligne</a></h2>
+                <p>L'outil pour les thermomètres de ligne !</p>
+                <p>Outil de création de thèrmomètre de ligne, (les plans dans les bus) basés 
+                    sur le style des bus de la TAG. Ces plans sont présents dans les bus pour 
+                    renseigner la clientèle sur les principales informations de parcours,
+                    comme une correspondance par exemple, ou une agence de transport.</p>
+            </div>
+        </div>
+
+    </main>
+    <footer></footer>
+</body>
+</html>
