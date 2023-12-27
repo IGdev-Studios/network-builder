@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head> <title>NBT - superplanchette</title>
+    <!-- Meta --> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- <meta property="og:title" content="TCS - Générateur Planchette" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thecitadis.fr/gen_planchette.html"/>
+    <meta property="og:image" content="/res/img/logo_citadis.png" />
+    <meta property="og:description" content="Générateur de planchettes conducteur en style HASTUS"> -->
+    
+    <!-- Script -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> -->
+    <script src="./res/js/html2pdf.bundle.min.js"></script>
+    <!-- <script src="./res/js/generic.js"></script> -->
+    <script src="./res/js/superplanchette.js"></script>
+    
+    <!-- Link -->
+    <link rel="shortcut icon" type="favicon/ico" href="./favicon.ico">
+    <!-- <link rel="stylesheet" type="text/css" href="./res/css/generic.css"> -->
+    <link rel="stylesheet" type="text/css" href="./res/css/superplanchette.css">
+    
+</head>
+<body>
+    <header>
+        <!-- Contenu du JS menu load -->
+    </header>
+    <main>
+        <div id="ext">
+            <!-- Cadre exterieur -->
+            <div id="data">
+                <!-- Coté data -->
+                <div class="config_box">
+                    <span class="title">Réglages feuille</span><br>
+                    <span>Couleur arrière plan </span><input type="color" value="#FFFFFF" id="i0"><br>
+                    <span>Afficher image repère </span><label class="form-switch"><input type="checkbox" id="plre"><i></i></label><br>
+                    <span>Entreprise </span><input type="text" name="" id="i1"><br>
+                    <span>Date Vigeur </span><input type="date" name="" id="i2"><br>
+                </div>
+                <div class="btn_box">
+                    <span class="title">Boutons</span>
+                    <div class="btn" onclick="showPopup('addPopup')">Ajouter un élément</div>
+                    <div class="btn" onclick="reloadPlanchette()">Regénérer fiche</div>
+                    <div class="btn" onclick="reloadPlanchette(jsonDemo)">Regénérer fiche (demo)</div>
+                    <div class="btn pdf" id="importJSON">Enregistrer en PDF</div>
+                    <div class="btn impo">Importer (JSON)</div>
+                    <div class="btn expo">Exporter (JSON)</div>
+                </div>
+            </div>
+            <div id="render">
+                <!-- coté rendu -->
+                <div id="headline">
+                    <div>Planchette service</div>
+                    <div id="entreprise">SEMITAG </div> <!-- compagnie changeable -->
+                    <div id="dateVigeur">En vigueur: 02/01/2023</div> <!-- date changeable -->
+                </div>
+                <div id="resume">
+                    <div id="service">
+                        <div id="idService">BUS - 001</div>
+                        <div id="periodeService">HI2223 - WE</div>
+                        <div>Type<br>jrn.<br>dfoi</div>
+                        <!-- coma : complet matin
+                            copm : complet après-midi
+                            dfoi : deux fois (coupé) -->
+                            <!-- GRID en A A C, B B C -->
+                            <div></div>
+                        </div>
+                        <div id="recap">
+                            <div>Voiture</div>
+                            <div>Relève<br>qui</div>
+                            <div>Début<br>service</div>
+                            <div>Lieu<br>début</div>
+                            <div>Heure<br>début</div>
+                            <div>Heure<br>fin</div>
+                            <div>Lieu<br>fin</div>
+                            <div>Relevé<br>par</div>
+                            <div>Fin<br>service</div>
+                            <!-- Fin tête tableau -->
+                        </div>
+                    </div>
+                    <div id="horaires">
+                        <div id="h_col1"></div>
+                        <div id="h_col2">
+                            <div class="h_main h_note" id="h_0">
+                                Cliquez sur "Regénérer Fiche" pour faire apparaitre une démonstration
+                            </div>
+                        </div>
+                        <div id="h_col3"></div>
+                    </div>
+                </div>
+                <div id="reel" style="display: none">
+                    <img src="https://cdn.discordapp.com/attachments/851355214447771688/1061751048022274098/20220724_132508546.jpg" alt="">
+                </div>
+            </div>
+        </main>
+        <div id="addPopup" class="popup" style="display: none;">        
+            <h2>Nouvel élément</h2>
+            <div class="radioParent">
+                <input type="radio" name="typeHoraire" value="voiture" id="Vo"><label for="Vo">🚍 Voiture</label>
+                <input type="radio" name="typeHoraire" value="course" id="Cr"><label for="Cr">📋 Course</label>
+                <input type="radio" name="typeHoraire" value="coupure" id="Cp"><label for="Cp">🌙 Coupure</label>
+                <input type="radio" name="typeHoraire" value="note" id="No"><label for="No">📝 Note</label>
+            </div>
+            <div id="newHoraire">Veuillez selectionner une catégorie ci-dessus</div>
+            <button onclick="hidePopup('addPopup')">❌ Fermer</button>
+            <button onclick="executeAddPopup()">➕ Ajouter</button>
+        </div>
+        <div id="servicePopup" class="popup" style="display: none;">
+            <h2>Définitions planchette</h2>
+            <input type="text" name="idService" id="ser_id" placeholder="ex. 21 -010"><label for="ser_id"> Numéro de planchette</label><br>
+            <input type="text" name="periodeService" id="ser_peri" placeholder="ex. HI2223 - LVH"><label for="ser_peri"> Euh...</label><br>
+            <div class="radioParent">
+                <input type="radio" name="typeService" value="coma" id="ser_coma"><label for="ser_coma">Service matin</label>
+                <input type="radio" name="typeService" value="copm" id="ser_copm"><label for="ser_copm">Service après-midi</label>
+                <input type="radio" name="typeService" value="dfoi" id="ser_dfoi"><label for="ser_dfoi">Service coupé</label><br>
+            </div>
+            <button onclick="hidePopup('servicePopup')">❌ Fermer</button>
+            <button onclick="executeServicePopup()">✏ Modifier</button>
+        </div>
+        <div id="recapPopup" class="popup" style="display: none;">
+            <h2>Récapitulatif service</h2>
+            <div id="newRecap">
+                <div>Voiture</div>
+                <div>Relève<br>qui</div>
+                <div>Début<br>service</div>
+                <div>Lieu<br>début</div>
+                <div>Heure<br>début</div>
+                <div>Heure<br>fin</div>
+                <div>Lieu<br>fin</div>
+                <div>Relevé<br>par</div>
+                <div>Fin<br>service</div>
+                <div>Boutons</div>
+                <!-- Fin tête tableau -->
+                <input type="text" placeholder="ex. 21 - 1">
+                <input type="text">
+                <input type="time">
+                <input type="text" placeholder="ex. VIFD">
+                <input type="time">
+                <input type="time">
+                <input type="text" placeholder="ex. TDV">
+                <input type="text">
+                <input type="time">
+                <div>
+                    <button>↓</button>
+                    <button>↑</button>
+                    <button>▬</button>
+                </div>
+            </div>
+            <button onclick="hidePopup('recapPopup')">❌ Fermer</button>
+            <button onclick="executeRecapPopup()">✏ Modifier</button>
+        </div>
+    </body>
+    </html>
+    

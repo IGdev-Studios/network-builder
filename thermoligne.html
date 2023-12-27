@@ -1,0 +1,72 @@
+<html lang="fr">
+<head>
+    <title>NBT - thermoligne</title>
+    <!-- Meta -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--
+    <meta property="og:title" content="TCS - Thèrmomètre Ligne" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thecitadis.fr/gen_thermo_ligne.html"/>
+    <meta property="og:image" content="/res/img/logo_citadis.png" />
+    <meta property="og:description" content="Générateur de Thèrmomètre de Ligne en style TAG">
+-->
+
+    <!-- Script -->
+    <!-- <script src="./res/js/generic.js"></script> -->
+    <script src="./res/js/thermoligne.js"></script>
+
+    <!-- Link -->
+    <link rel="shortcut icon" type="favicon/ico" href="./favicon.ico"></link>
+    <link rel="stylesheet" href="./res/css/generic.css">
+    <link rel="stylesheet" href="./res/css/thermoligne.css">
+
+</head>
+<body>
+    <header></header>
+    <main>
+        <div id="toolBox">
+            <!-- Boite à outils -->
+            <button id="addArret">Ajouter un arrêt</button>
+        </div>
+        <div id="render">
+            <svg width="420">
+                <!-- 40 / 40 -->
+                <rect class="ligne" x="40" y="50" width="40" height="20"/>
+                <circle class="arret" cx="40" cy="60" r="15" stroke="black" fill="white"/>
+                <rect class="tempo" x="40" y="111" width="40" height="4"/>
+                <rect class="tempo" x="38" y="85" width="4" height="30"/>
+                <text class="nom" x="0" y="0" transform="translate(50,40) rotate(-30)">Capuche</text>
+                <!-- 80 / 120 -->
+                <rect class="ligne" x="80" y="50" width="80" height="20"/>
+                <circle class="arret" cx="120" cy="60" r="15" stroke="black" fill="white"/>
+                <rect class="tempo" x="80" y="111" width="80" height="4"/>
+                <text class="nom" x="0" y="0" transform="translate(130,40) rotate(-30)">Luire</text>
+                <rect class="ctemps" x="105" y="100" width="25" height="25"/>
+                <text class="temps" x="110" y="120">4'</text>
+                <!-- 160 / 200 -->
+                <rect class="ligne" x="160" y="50" width="80" height="20"/>
+                <circle class="arret" cx="200" cy="60" r="15" stroke="black" fill="white"/>
+                <rect class="tempo" x="160" y="111" width="80" height="4"/>
+                <rect class="tempo" x="198" y="85" width="4" height="30"/>
+                <text class="nom" x="0" y="0" transform="translate(210,40) rotate(-30)">Belle Île</text>
+                <!-- 240 / 280 -->
+                <rect class="ligne" x="240" y="50" width="80" height="20"/>
+                <circle class="arret" cx="280" cy="60" r="15" stroke="black" fill="white"/>
+                <rect class="tempo" x="240" y="111" width="80" height="4"/>
+                <text class="nom" x="0" y="0" transform="translate(290,40) rotate(-30)">Mattons</text>
+                <rect class="ctemps" x="265" y="100" width="25" height="25"/>
+                <text class="temps" x="270" y="120">5'</text>
+                <!-- 320 / 360 -->
+                <rect class="ligne" x="320" y="50" width="40" height="20"/>
+                <circle class="arret" cx="360" cy="60" r="15" stroke="black" fill="white"/>
+                <rect class="tempo" x="320" y="111" width="40" height="4"/>
+                <rect class="tempo" x="358" y="85" width="4" height="30"/>
+                <text class="nom" x="0" y="0" transform="translate(370,40) rotate(-30)">Jaurès</text>
+                
+            </svg>
+        </div>
+    </main>
+</body>
+</html>

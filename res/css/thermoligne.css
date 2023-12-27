@@ -1,0 +1,30 @@
+#render,#render2{
+    border: salmon solid 2px;
+
+    background-color: aliceblue;
+}
+svg{
+    margin: 0;
+    /* overflow: visible; */
+}
+/* * * * * * * * */
+/* Styles Arrêts */
+/* * * * * * * * */
+.ligne{
+    fill: #ffd800;
+}
+.tempo{
+    fill: #ff8f00;
+}
+.arret{
+    fill: white;
+    stroke: black;
+    stroke-width: 3;
+}
+.ctemps{
+    fill: aliceblue;
+}
+.temps{
+    font-size: x-large;
+    fill: #ff8f00;
+}

@@ -1,0 +1,297 @@
+/*********************/
+/* Règles d'ensemble */
+/*********************/
+main{
+    display: flex;
+    justify-content: center;
+    color: black;
+}
+i{
+    color: gray;
+}
+.title{
+    text-decoration: underline;
+}
+/*****************/
+/* Cadre externe */
+/*****************/
+#ext{
+    /* border: solid 2px yellow; */
+    display: flex;
+}
+/********************/
+/* Boites de config */
+/********************/
+.config_box,.data_box,.btn_box,.layout_box{
+    color: black;
+    background-color: aliceblue;
+    border: solid lavender 2px;
+    border-radius: 40px;
+    padding: 1vw;
+    margin: 2vh;
+}
+input{
+    margin: 2px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 2px 2px 5px 2px lightgray;
+}
+/************/
+/* Boutons  */
+/************/
+.btn{
+    background-color: gray;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 5px;
+    box-shadow: 2px 2px lightgray;
+    cursor: pointer;
+    color: aliceblue;
+}
+.btn:hover{background-color: #444;}
+.btn.pdf{background-color: red;}
+.btn.pdf:hover{background-color: darkred;}
+.btn.impo{background-color: #0000f0;}
+.btn.impo:hover{background-color: #000080;}
+.btn.expo{background-color: violet;}
+.btn.expo:hover{background-color: darkorchid;}
+/********/
+/* TEMP */
+/********/
+#reel img{
+    max-width: 400px;
+}
+/*
+Rendu coté planchette finie
+*/
+#render{
+    background-color: white;
+    padding: 5px;
+    /* border: solid 2px black; */
+    /* box-shadow: #aaa 10px; */
+    width: 785px;
+    min-height: 1110px;
+    /* Valeurs A4
+    72dpi w595 h842
+    100dpi w827 h1170
+    300dpi w2480 h3508
+    */
+}
+/************/
+/* Headline */
+/************/
+#headline{
+    display: flex;
+    justify-content: space-between;
+    border-bottom: solid 2px black;
+    font-size: larger;
+    padding-top: 30px;
+}
+#headline div:nth-child(2){font-size: larger;}
+/*************/
+/* Résumé */
+/*************/
+#resume{
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    border-bottom: solid 2px black ;
+    /* font-size: small; */
+}
+#service{
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    grid-template-areas: "A A C" "B B C";
+    border-right: solid 2px black;
+    font-size: large;
+    font-weight: 600;
+}
+#service div:nth-child(1){grid-area: A;}
+#service div:nth-child(2){grid-area: B;}
+#service div:nth-child(3){grid-area: C;font-size: smaller;font-weight: 500;}
+
+#recap{
+    padding: 5px 10px;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    justify-content: space-around;
+}
+:is(#service,#recap):hover{
+    background-color: #eee;
+
+}
+/*************/
+/* Horaires
+Colonnes */
+/*************/
+#horaires{
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(3, 1fr);
+    /* grid-template-rows: repeat(calc(7),auto); */
+    column-gap: 14px;
+    font-size: 15px;    
+}
+/**********/
+/* Horaires
+Tours */
+/**********/
+.h_voiture,.h_coupure{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: solid 2px black ;
+    padding: 5px;
+}
+.h_course{
+    display: flex;
+    flex-direction: column;
+    border-bottom: dashed 2px black ;
+    padding: 5px;
+}
+.h_course:has(+:is(.h_coupure,.h_note,.h_voiture)){
+    border-bottom: solid 2px black ;
+}
+.h_note{
+    border-bottom: solid 2px black ;
+    padding: 5px;
+    font-style: italic;
+    color: gray;
+}.h_note::before{content: "Note : ";}
+.h_main{position: relative;}
+.h_main>.h_btnBar{
+    display: none;
+    position: absolute;
+    bottom: -6px;
+    left: 35%;
+}
+.h_main:hover{background-color: #eee;}
+.h_main:hover>.h_btnBar{display: block;}
+.h_arr,.h_ter{
+    display: flex;
+    justify-content: space-between;
+}.h_ter{font-weight: bold;}
+#h_col3>div:last-child{border-bottom: solid 2px black;}
+.h_btnBar button{
+    background-color: white;
+    border:none;
+    border-top:solid 1px grey;
+    border-bottom: solid 1px grey ;
+}
+.h_btnBar button:first-of-type{
+    border-left:solid 1px grey ;
+    border-radius: 20px 0 0 20px;
+}.h_btnBar button:last-of-type{
+    border-right: solid 1px grey ;
+    border-radius: 0 20px 20px 0;
+}.h_btnBar button:hover{background-color: #eee;}
+/**********/
+/* Switch */
+/**********/
+.form-switch {
+    display: inline-block;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.form-switch i {
+    position: relative;
+    display: inline-block;
+    margin-right: .5rem;
+    width: 46px;
+    height: 26px;
+    background-color: #e6e6e6;
+    border-radius: 23px;
+    vertical-align: text-bottom;
+    transition: all 0.3s linear;
+}
+.form-switch i::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 42px;
+    height: 22px;
+    background-color: #fff;
+    border-radius: 11px;
+    transform: translate3d(2px, 2px, 0) scale3d(1, 1, 1);
+    transition: all 0.25s linear;
+}
+.form-switch i::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 22px;
+    height: 22px;
+    background-color: #fff;
+    border-radius: 11px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.24);
+    transform: translate3d(2px, 2px, 0);
+    transition: all 0.2s ease-in-out;
+}
+.form-switch:active i::after {
+    width: 28px;
+    transform: translate3d(2px, 2px, 0);
+}
+.form-switch:active input:checked + i::after { transform: translate3d(16px, 2px, 0); }
+.form-switch input { display: none; }
+.form-switch input:checked + i { background-color: #4BD763; }
+.form-switch input:checked + i::before { transform: translate3d(18px, 2px, 0) scale3d(0, 0, 0); }
+.form-switch input:checked + i::after { transform: translate3d(22px, 2px, 0); }
+
+/**********/
+/* Popups */
+/**********/
+.popup{
+    position: absolute;
+    left: 30%;
+    top: 25%;
+    padding: 20px;
+    box-shadow: #ddd 5px 5px 10px 5px;
+    border-radius: 10px;
+    /* border: #ddd solid 2px; */
+    background-color: #fff;
+}
+.popup *{
+    margin-bottom: 10px;
+}
+.radioParent{
+    margin: 15px 0px;
+}
+input[type="radio"]{
+    display: none;
+}
+input[type="radio"] + label,.popup button{
+    cursor: pointer;
+    background-color: #eee;
+    border: none;
+    font-size: medium;
+    border-radius: 20px;
+    padding: 5px 10px;
+}
+.radioParent input:checked + label,.radioParent input + label:hover,.popup button:hover  {
+    background-color: #bbb;
+}
+/* Spec Popup Recap*/
+#newRecap{
+    padding: 5px 10px;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    justify-content: space-evenly;
+}
+#newRecap input{
+    max-width: 60px;
+}
+
+/**********/
+/* @media */
+/**********/
+@media screen and (max-width:1160px){
+    #ext{
+        display: none;
+    }
+    main::after{
+        padding: 30px;
+        font-size: larger;
+        color: red;
+        content: "Votre écran n'est pas assez grand pour afficher correctement le générateur. Veuillez revenir sur un ordinateur s'il-vous-plait.";
+    }
+}
