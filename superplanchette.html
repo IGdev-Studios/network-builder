@@ -20,15 +20,18 @@
     
     <!-- Link -->
     <link rel="shortcut icon" type="favicon/ico" href="./favicon.ico">
-    <!-- <link rel="stylesheet" type="text/css" href="./res/css/generic.css"> -->
+    <link rel="stylesheet" type="text/css" href="./res/css/generic.css">
     <link rel="stylesheet" type="text/css" href="./res/css/superplanchette.css">
     
 </head>
 <body>
     <header>
-        <!-- Contenu du JS menu load -->
+        <h1>Ediligne</h1>
+        <div id="MainMenuBtn">Menu ◀️</div>
+        <!-- Merci de copier le menu depuis index.html une fois celui-ci
+             fonctionnel. -->
+             <div><a href="./index.html">Temp Back Accueil 🏠</a></div>
     </header>
-    <main>
         <div id="ext">
             <!-- Cadre exterieur -->
             <div id="data">
@@ -36,7 +39,7 @@
                 <div class="config_box">
                     <span class="title">Réglages feuille</span><br>
                     <span>Couleur arrière plan </span><input type="color" value="#FFFFFF" id="i0"><br>
-                    <span>Afficher image repère </span><label class="form-switch"><input type="checkbox" id="plre"><i></i></label><br>
+                    <span>Afficher image repère </span><label class="form-switch"><input type="checkbox" id="plre" disabled><i></i></label><br>
                     <span>Entreprise </span><input type="text" name="" id="i1"><br>
                     <span>Date Vigeur </span><input type="date" name="" id="i2"><br>
                 </div>
@@ -44,10 +47,10 @@
                     <span class="title">Boutons</span>
                     <div class="btn" onclick="showPopup('addPopup')">Ajouter un élément</div>
                     <div class="btn" onclick="reloadPlanchette()">Regénérer fiche</div>
-                    <div class="btn" onclick="reloadPlanchette(jsonDemo)">Regénérer fiche (demo)</div>
+                    <div class="btn" onclick="reloadPlanchette(json_StServan_U1)">Générer Démo (StServan U)</div>
                     <div class="btn pdf" id="importJSON">Enregistrer en PDF</div>
-                    <div class="btn impo">Importer (JSON)</div>
-                    <div class="btn expo">Exporter (JSON)</div>
+                    <!-- <div class="btn impo">Importer (JSON)</div> -->
+                    <!-- <div class="btn expo">Exporter (JSON)</div> -->
                 </div>
             </div>
             <div id="render">
@@ -64,6 +67,7 @@
                         <div>Type<br>jrn.<br>dfoi</div>
                         <!-- coma : complet matin
                             copm : complet après-midi
+                            coso : complet soirée
                             dfoi : deux fois (coupé) -->
                             <!-- GRID en A A C, B B C -->
                             <div></div>
@@ -105,8 +109,8 @@
                 <input type="radio" name="typeHoraire" value="note" id="No"><label for="No">📝 Note</label>
             </div>
             <div id="newHoraire">Veuillez selectionner une catégorie ci-dessus</div>
-            <button onclick="hidePopup('addPopup')">❌ Fermer</button>
-            <button onclick="executeAddPopup()">➕ Ajouter</button>
+            <button onclick="hidePopup('addPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
+            <button onclick="executeAddPopup()"><img src="./res/svg/plus-thick.svg" height="20"> Ajouter</button>
         </div>
         <div id="servicePopup" class="popup" style="display: none;">
             <h2>Définitions planchette</h2>
@@ -115,10 +119,11 @@
             <div class="radioParent">
                 <input type="radio" name="typeService" value="coma" id="ser_coma"><label for="ser_coma">Service matin</label>
                 <input type="radio" name="typeService" value="copm" id="ser_copm"><label for="ser_copm">Service après-midi</label>
+                <input type="radio" name="typeService" value="coso" id="ser_coso"><label for="ser_coso">Service soirée</label>
                 <input type="radio" name="typeService" value="dfoi" id="ser_dfoi"><label for="ser_dfoi">Service coupé</label><br>
             </div>
-            <button onclick="hidePopup('servicePopup')">❌ Fermer</button>
-            <button onclick="executeServicePopup()">✏ Modifier</button>
+            <button onclick="hidePopup('servicePopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
+            <button onclick="executeServicePopup()"><img src="./res/svg/pencil.svg" height="20"> Modifier</button>          
         </div>
         <div id="recapPopup" class="popup" style="display: none;">
             <h2>Récapitulatif service</h2>
@@ -144,13 +149,13 @@
                 <input type="text">
                 <input type="time">
                 <div>
-                    <button>↓</button>
-                    <button>↑</button>
-                    <button>▬</button>
+                    <button><img src="./res/svg/table-row-plus-after.svg" height="10" alt="↓"></button>
+                    <button><img src="./res/svg/table-row-plus-before.svg" height="10" alt="↑"></button>
+                    <button><img src="./res/svg/table-row-remove.svg" height="10" alt="▬"></button>
                 </div>
             </div>
-            <button onclick="hidePopup('recapPopup')">❌ Fermer</button>
-            <button onclick="executeRecapPopup()">✏ Modifier</button>
+            <button onclick="hidePopup('recapPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
+            <button onclick="executeRecapPopup()"><img src="./res/svg/pencil.svg" height="20"> Modifier</button>
         </div>
     </body>
     </html>

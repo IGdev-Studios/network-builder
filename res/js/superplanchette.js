@@ -133,13 +133,20 @@ function changeAddPopup(element,valeur) {
  * @returns Retourne la chaine préparée de la barre de boutons
  */
 function generateBtnBar(i,horaire) {
+  let edt = document.createElement('button');
   let mdn = document.createElement('button');
   let mup = document.createElement('button');
   let del = document.createElement('button');
   let bar = document.createElement('div');
+  edt.innerHTML = "Edit" // ✏
   mdn.innerHTML = "↓"
   mup.innerHTML = "↑"
   del.innerHTML = "▬"
+  edt.addEventListener("click", function(){
+    // console.log(i)
+    console.log(horaire)
+    // Utiliser le Horaire, pour re-setup la fenêtre de modif.
+  })
   mdn.addEventListener("click", function(){
     jsonSave.horaires.splice(i, 1);
     jsonSave.horaires.splice(i+1, 0,horaire);
@@ -154,7 +161,7 @@ function generateBtnBar(i,horaire) {
     jsonSave.horaires.splice(i, 1);
     reloadHoraires()})
   bar.className = "h_btnBar"
-  bar.appendChild(mdn);  bar.appendChild(mup);  bar.appendChild(del);
+  bar.appendChild(edt); bar.appendChild(mdn);  bar.appendChild(mup);  bar.appendChild(del);
   return bar;
 }
 /**
@@ -281,9 +288,9 @@ function reloadRecapList() {
       newRecapList.appendChild(inputFinService)
 
       // Boutons 
-      let pdn = document.createElement('button');pdn.innerHTML = '↓';
-      let pup = document.createElement('button');pup.innerHTML = '↑';
-      let del = document.createElement('button');del.innerHTML = '▬';
+      let pdn = document.createElement('button');pdn.innerHTML = '<img src="./res/svg/table-row-plus-after.svg" height="20" alt="↓">';
+      let pup = document.createElement('button');pup.innerHTML = '<img src="./res/svg/table-row-plus-before.svg" height="20" alt="↑">';
+      let del = document.createElement('button');del.innerHTML = '<img src="./res/svg/table-row-remove.svg" height="20" alt="▬">';
 
       pdn.addEventListener('click',()=>{recapArray.splice(i+1, 0, {"voiture":"","releveQui":"","debutService":"","lieuDebut":"","heureDebut":"","heureFin":"","lieuFin":"","relevePar":"","finService":""});reloadRecapList();}) 
       pup.addEventListener('click',()=>{recapArray.splice(i, 0, {"voiture":"","releveQui":"","debutService":"","lieuDebut":"","heureDebut":"","heureFin":"","lieuFin":"","relevePar":"","finService":""});reloadRecapList()});
@@ -462,7 +469,7 @@ function reloadHoraires(jsonData = jsonSave) {
         poidsItem = 1
         addDiv.className = "h_main h_coupure"
         addType.innerHTML = "Coupure"
-        addValue.innerHTML = horaire.heureFin+"   "+horaire.heureDebut
+        addValue.innerHTML = horaire.heureDebut+"   "+horaire.heureFin
         addDiv.appendChild(addType)
         addDiv.appendChild(addValue)
       break;

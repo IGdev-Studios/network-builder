@@ -1,6 +1,12 @@
 /*********************/
 /* Règles d'ensemble */
 /*********************/
+
+  @import url('https://fonts.googleapis.com/css2?family=Fira+Sans&family=Varela+Round&display=swap');
+
+  *{
+    font-family: 'Fira Sans';
+  }
 main{
     display: flex;
     justify-content: center;
@@ -68,7 +74,7 @@ Rendu coté planchette finie
 #render{
     background-color: white;
     padding: 5px;
-    /* border: solid 2px black; */
+    border: solid 2px black;
     /* box-shadow: #aaa 10px; */
     width: 785px;
     min-height: 1110px;
@@ -170,6 +176,7 @@ Tours */
 .h_arr,.h_ter{
     display: flex;
     justify-content: space-between;
+    /* background-image: ; */
 }.h_ter{font-weight: bold;}
 #h_col3>div:last-child{border-bottom: solid 2px black;}
 .h_btnBar button{
@@ -250,7 +257,7 @@ Tours */
     /* border: #ddd solid 2px; */
     background-color: #fff;
 }
-.popup *{
+.popup>*{
     margin-bottom: 10px;
 }
 .radioParent{
