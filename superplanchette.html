@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head> <title>NBT - superplanchette</title>
+<head> <title>NBT - Superplanchette</title>
     <!-- Meta --> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +26,7 @@
 </head>
 <body>
     <header>
-        <h1>Ediligne</h1>
+        <h1>Superplanchette</h1>
         <div id="MainMenuBtn">Menu ◀️</div>
         <!-- Merci de copier le menu depuis index.html une fois celui-ci
              fonctionnel. -->
@@ -102,15 +102,29 @@
         </main>
         <div id="addPopup" class="popup" style="display: none;">        
             <h2>Nouvel élément</h2>
-            <div class="radioParent">
-                <input type="radio" name="typeHoraire" value="voiture" id="Vo"><label for="Vo">🚍 Voiture</label>
-                <input type="radio" name="typeHoraire" value="course" id="Cr"><label for="Cr">📋 Course</label>
-                <input type="radio" name="typeHoraire" value="coupure" id="Cp"><label for="Cp">🌙 Coupure</label>
-                <input type="radio" name="typeHoraire" value="note" id="No"><label for="No">📝 Note</label>
-            </div>
+            <select id="typeHoraire">
+                <option value="" disabled selected>- Choissisez une option -</option>
+                <option value="num_voiture">🚍 Numéro de Voiture</option>
+                <option value="num_course">= Numéro de Course</option>
+                <option value="course">📋 Course</option>
+                <option value="coupure">🌙 Coupure</option>
+                <option value="note">📝 Note</option>
+                <option value="deplacement" disabled>↔ Déplacement</option>
+            </select>
             <div id="newHoraire">Veuillez selectionner une catégorie ci-dessus</div>
             <button onclick="hidePopup('addPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
             <button onclick="executeAddPopup()"><img src="./res/svg/plus-thick.svg" height="20"> Ajouter</button>
+        </div>
+        <div id="editPopup" class="popup" style="display: none;">
+            <h2>Edition</h2>
+            <select name="" id="">
+                <option value="voiture">Voiture</option>
+                <option value="course">course</option>
+                <option value="coupure">coupure</option>
+                <option value="note">note</option>
+            </select>
+            <button onclick="hidePopup('editPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
+            <button onclick="executeEditPopup()"><img src="./res/svg/pencil.svg" height="20"> Modifier</button>
         </div>
         <div id="servicePopup" class="popup" style="display: none;">
             <h2>Définitions planchette</h2>
@@ -123,7 +137,7 @@
                 <input type="radio" name="typeService" value="dfoi" id="ser_dfoi"><label for="ser_dfoi">Service coupé</label><br>
             </div>
             <button onclick="hidePopup('servicePopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
-            <button onclick="executeServicePopup()"><img src="./res/svg/pencil.svg" height="20"> Modifier</button>          
+            <button onclick="executeServicePopup()"><img src="./res/svg/check-bold.svg" height="20"> Valider</button>          
         </div>
         <div id="recapPopup" class="popup" style="display: none;">
             <h2>Récapitulatif service</h2>
@@ -155,7 +169,7 @@
                 </div>
             </div>
             <button onclick="hidePopup('recapPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
-            <button onclick="executeRecapPopup()"><img src="./res/svg/pencil.svg" height="20"> Modifier</button>
+            <button onclick="executeRecapPopup()"><img src="./res/svg/check-bold.svg" height="20"> Valider</button>
         </div>
     </body>
     </html>

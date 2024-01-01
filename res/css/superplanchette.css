@@ -142,20 +142,21 @@ Colonnes */
 /* Horaires
 Tours */
 /**********/
-.h_voiture,.h_coupure{
+.h_num_voiture,.h_num_course,.h_coupure{
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: solid 2px black ;
     padding: 5px;
 }
+.h_num_course{border-bottom: dotted 2px black ;}
 .h_course{
     display: flex;
     flex-direction: column;
     border-bottom: dashed 2px black ;
     padding: 5px;
 }
-.h_course:has(+:is(.h_coupure,.h_note,.h_voiture)){
+.h_course:has(+:is(.h_coupure,.h_note,.h_num_voiture,.h_num_course)){
     border-bottom: solid 2px black ;
 }
 .h_note{
@@ -266,7 +267,7 @@ Tours */
 input[type="radio"]{
     display: none;
 }
-input[type="radio"] + label,.popup button{
+input[type="radio"] + label,.popup button,select{
     cursor: pointer;
     background-color: #eee;
     border: none;
