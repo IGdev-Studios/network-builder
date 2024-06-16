@@ -1,0 +1,27 @@
+main{
+    display: grid;
+    grid-template-columns: 2fr 1fr ;
+}
+main>div{
+    margin: 10px;
+}
+table{
+    border: black solid 1px;
+    width: 100%;
+}
+#arret_list{
+
+}
+#arret_add{
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+}
+.form{margin-bottom: 20px;}
+
+.notif_ok{
+    padding: 0 10px;
+    border-radius: 20px;
+    background-color: green;
+    color: white;
+}
