@@ -16,16 +16,28 @@
     background-color: whitesmoke;
     border-top: solid lightgray 1px;
     display: grid;
-    grid-template-areas: 'L D D B';
+    grid-template-columns: 0.2fr 1fr 3fr;
+    position: relative;;
 }
 .Ligne:first-of-type{border-top: none;}
 .LigneListId{
-    grid-area: L;
-    align-self: center;
-    justify-self: center;
-    /* height: 100%;
-    width: 100%; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.LigneListDest1{grid-area: D;}
-.LigneListDest2{grid-area: A;}
-.LigneListBtns{grid-area: B;display: flex;flex-direction: column;}
+.LigneListCode{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 200%;
+    height: 100%;
+    width: 100%;
+}
+.LigneListDest{
+    margin-left: 0.5em ;
+}
+.LigneListBtns{
+    position: absolute;
+    right: 0;
+    top: 25%; 
+}

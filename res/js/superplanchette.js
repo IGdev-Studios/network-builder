@@ -34,6 +34,9 @@ window.onload = function(){
   i0 = document.querySelector("#i0");
   i0.onchange = function(){
     document.querySelector("#render").style = `background-color: ${i0.value}`
+    document.querySelectorAll(".h_ter>span, .h_arr>span").forEach(function(e){
+      e.style.background = i0.value
+    })
   }
   // Entreprise
   i1 = document.querySelector('#i1');

@@ -11,30 +11,61 @@
 
     <script src="./res/js/ediligne.js"></script>
 </head>
+<!-- Icones → https://pictogrammers.com/library/mdi/ -->
 <body>
     <header>
         <h1>Ediligne</h1>
         <div id="MainMenuBtn">Menu ◀️</div>
         <!-- Merci de copier le menu depuis index.html une fois celui-ci
              fonctionnel. -->
-             <div><a href="./index.html">Temp Back Accueil 🏠</a></div>
+             <div><a href="./index.html">Retour Accueil 🏠</a></div>
     </header>
     <main>
         <h2>Panel de gestion des Lignes</h2>
+        <!-- Boutons Debug -->
+        <div>
+            <hr>
+            <span>Boutons debugage :</span>
+            <button type="button" id="bd0">Refresh</button>
+            <button type="button" id="bd1">LignesTM→LS</button>
+            <button type="button" id="bd2">LignesBerny→LS</button>
+            <button type="button" id="bd3">Vider LS</button>
+            <hr>
+        </div>
         <div id="main">
             <div id="LigneList">
                 <div class="Ligne">
-                    <div class="LigneListId">id</div>
+                    <!-- Liste des lignes -->
+                    <div class="LigneListId">Id</div>
+                    <div class="LigneListCode">Code</div>
                     <div class="LigneListDest">
                         <div>Destination 1</div>
                         <div>Destination 2</div>
+                        <div>Destination 3</div>
                     </div>
-                    <div class="LigneListBtns"><button>↑</button><button>-</button><button>↓</button></div>
+                    <div class="LigneListBtns">
+                        <button><img src="./res/svg/pencil.svg" alt="Editer" height="20"></button>
+                        <button><img src="./res/svg/delete.svg" alt="Supprimer" height="20"></button>
+                    </div>
                 </div>
-                <!-- Liste des lignes -->
             </div>
             <div id="LigneDetails">
                 <!-- Détails de la ligne selectionée -->
+                <table>
+                    <tr>
+                        <td>Nom :</td><td><input type="text"></td>
+                    </tr>
+                    <tr>
+                        <td>Code ligne :</td><td><input type="text"></td>
+                    </tr>
+                    <tr>
+                        <td>Code couleur :</td><td><input type="color"></td>
+                    </tr>
+                    <tr>
+                        <td>Arrêts :</td><td></td>
+                    </tr>
+                </table>
+                <button><img src="./res/svg/check-bold.svg" alt="" height="20">Valider</button> <button><img src="./res/svg/close-thick.svg" alt="" height="20">Annuler</button>
             </div>
         </div>
     </main>

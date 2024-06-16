@@ -32,13 +32,16 @@
              fonctionnel. -->
              <div><a href="./index.html">Temp Back Accueil 🏠</a></div>
     </header>
+    <main>
         <div id="ext">
             <!-- Cadre exterieur -->
             <div id="data">
                 <!-- Coté data -->
                 <div class="config_box">
                     <span class="title">Réglages feuille</span><br>
-                    <span>Couleur arrière plan </span><input type="color" value="#FFFFFF" id="i0"><br>
+                    <span>Couleur arrière plan </span>
+                    <input type="radio">
+                    <input type="color" value="#FFFFFF" id="i0"><br>
                     <span>Afficher image repère </span><label class="form-switch"><input type="checkbox" id="plre" disabled><i></i></label><br>
                     <span>Entreprise </span><input type="text" name="" id="i1"><br>
                     <span>Date Vigeur </span><input type="date" name="" id="i2"><br>
@@ -71,35 +74,38 @@
                             dfoi : deux fois (coupé) -->
                             <!-- GRID en A A C, B B C -->
                             <div></div>
-                        </div>
-                        <div id="recap">
-                            <div>Voiture</div>
-                            <div>Relève<br>qui</div>
-                            <div>Début<br>service</div>
-                            <div>Lieu<br>début</div>
-                            <div>Heure<br>début</div>
-                            <div>Heure<br>fin</div>
-                            <div>Lieu<br>fin</div>
-                            <div>Relevé<br>par</div>
-                            <div>Fin<br>service</div>
-                            <!-- Fin tête tableau -->
-                        </div>
                     </div>
-                    <div id="horaires">
-                        <div id="h_col1"></div>
-                        <div id="h_col2">
-                            <div class="h_main h_note" id="h_0">
-                                Cliquez sur "Regénérer Fiche" pour faire apparaitre une démonstration
-                            </div>
-                        </div>
-                        <div id="h_col3"></div>
+                    <div id="recap">
+                        <div>Voiture</div>
+                        <div>Relève<br>qui</div>
+                        <div>Début<br>service</div>
+                        <div>Lieu<br>début</div>
+                        <div>Heure<br>début</div>
+                        <div>Heure<br>fin</div>
+                        <div>Lieu<br>fin</div>
+                        <div>Relevé<br>par</div>
+                        <div>Fin<br>service</div>
+                        <!-- Fin tête tableau -->
                     </div>
                 </div>
+                <div id="horaires">
+                    <div id="h_col1"></div>
+                    <div id="h_col2">
+                        <div class="h_main h_note" id="h_0">
+                            Cliquez sur "Regénérer Fiche" pour faire apparaitre une démonstration
+                        </div>
+                    </div>
+                    <div id="h_col3"></div>
+                </div>
+                <div id="pied">
+                    <div>Planchette générée par Network Builder Toolkit sur thecitadis.fr</div>
+                </div>
+            </div>
                 <div id="reel" style="display: none">
                     <img src="https://cdn.discordapp.com/attachments/851355214447771688/1061751048022274098/20220724_132508546.jpg" alt="">
                 </div>
             </div>
-        </main>
+    </main>
         <div id="addPopup" class="popup" style="display: none;">        
             <h2>Nouvel élément</h2>
             <select id="typeHoraire">

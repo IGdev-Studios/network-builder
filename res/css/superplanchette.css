@@ -77,12 +77,25 @@ Rendu coté planchette finie
     border: solid 2px black;
     /* box-shadow: #aaa 10px; */
     width: 785px;
-    min-height: 1110px;
+    /* min-height: 1110px; */
+    position: relative;
     /* Valeurs A4
     72dpi w595 h842
     100dpi w827 h1170
     300dpi w2480 h3508
     */
+}
+/********/
+/* Pied */
+/********/
+#pied{
+    display: flex;
+    justify-content: center;
+    font-size: small;
+    /* position: absolute; */
+    border-top: solid 1px black;
+    bottom: 0;
+    margin: 0;
 }
 /************/
 /* Headline */
@@ -136,7 +149,8 @@ Colonnes */
     grid-template-columns: repeat(3, 1fr);
     /* grid-template-rows: repeat(calc(7),auto); */
     column-gap: 14px;
-    font-size: 15px;    
+    font-size: 15px;
+    margin-bottom: 15px;
 }
 /**********/
 /* Horaires
@@ -177,8 +191,11 @@ Tours */
 .h_arr,.h_ter{
     display: flex;
     justify-content: space-between;
-    /* background-image: ; */
+    background-image: radial-gradient(circle at 1px 13px, black 1px, transparent 0);
+    background-size: 4px 20px;
+    /* background-position: bottom 40px; */
 }.h_ter{font-weight: bold;}
+.h_arr>span,.h_ter>span{background: white;padding: 0 2px};
 #h_col3>div:last-child{border-bottom: solid 2px black;}
 .h_btnBar button{
     background-color: white;
