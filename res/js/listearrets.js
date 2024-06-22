@@ -56,9 +56,9 @@ window.onload = function(){
     
   
 }
-// let liste_arrets
 let timoutTime = 2000
 
+let ListeArrets
 // Fonction pour récupérer les données depuis la base de données via une requête HTTP
 function getListeArrets() {
     // Création d'une nouvelle requête XMLHttpRequest
@@ -77,7 +77,8 @@ function getListeArrets() {
             // Utilisation des données récupérées (ex : affichage dans la console)
             console.log(data);
             reload_arrets(data)
-            liste_arrets = data
+            ListeArrets = data
+            localStorage.setItem("NBT-ListeArrets",JSON.stringify(data))
         } else {
             // Gestion des erreurs
             console.error('La requête a échoué. Statut de la réponse : ' + xhr.status);
