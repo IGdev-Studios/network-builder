@@ -9,9 +9,9 @@ table{
     border: black solid 1px;
     width: 100%;
 }
-#arret_list{
+/* #arret_list{
 
-}
+} */
 #arret_add{
     display: flex;
     flex-direction: column;

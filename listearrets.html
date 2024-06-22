@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NBT</title>
+    <title>NBT - Liste d'arrêts</title>
     
     <!-- Links -->
     <link rel="stylesheet" href="./res/css/generic.css">
@@ -28,14 +28,16 @@
                         <td>Id</td>
                         <td>Nom</td>
                         <td>Ville</td>
+                        <td>Actions</td>
                         <!-- <td>Lignes</td> -->
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>0</td>
-                        <td>Le Nom - de l'arrêt</td>
-                        <td>QuelquePart</td>
+                    <tr data-arret-id="0">
+                        <td class="arret-id">0</td>
+                        <td class="arret-nom">Le Nom - de l'arrêt</td>
+                        <td class="arret-ville">QuelquePart</td>
+                        <td class="arret-boutons"></td>
                         
                     </tr>
                 </tbody>
@@ -45,76 +47,76 @@
             <!-- Secteur droite -->
             <!-- Ajout d'arrêts -->
             <div class="form">Form Ajouter un arrêt
-            <form id="add_form">
-                <table>
-                    <tr>
-                        <td>
-                            <label for="add_arret_nom">Nom</label>
-                        </td>
-                        <td>
-                            <input type="text" name="add_arret_nom" id="add_arret_nom" required placeholder="ex. Maladière">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label for="add_arret_ville">Ville</label>
-                        </td>
-                        <td>
-                            <input type="text" name="add_arret_ville" id="add_arret_ville" placeholder="ex. Sassenage">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td id="add_form_submit">
-                            <input type="submit">
-                        </td>
-                    </tr>
-                </table>
-            </form>
+                <form id="add_form">
+                    <table>
+                        <tr>
+                            <td>
+                                <label for="add_arret_nom">Nom</label>
+                            </td>
+                            <td>
+                                <input type="text" name="add_arret_nom" id="add_arret_nom" required placeholder="ex. Maladière">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="add_arret_ville">Ville</label>
+                            </td>
+                            <td>
+                                <input type="text" name="add_arret_ville" id="add_arret_ville" placeholder="ex. Sassenage">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td id="add_form_submit">
+                                <input type="submit">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            <div class="form">Form Modifier un arrêt
+                <form id="edit_form">
+                    <table>
+                        <tr>
+                            <td>
+                                <label for="edit_arret_id">Id</label>
+                            </td>
+                            <td>
+                                <input type="number" name="edit_arret_id" id="edit_arret_id" disabled required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="edit_arret_nom">Nom</label>
+                            </td>
+                            <td>
+                                <input type="text" name="edit_arret_nom" id="edit_arret_nom" required placeholder="">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="edit_arret_ville">Ville</label>
+                            </td>
+                            <td>
+                                <input type="text" name="edit_arret_ville" id="edit_arret_ville" placeholder="">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td id="edit_form_submit">
+                                <input type="submit">
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+                
+                
+            </div>
         </div>
-        <div class="form">Form Modifier un arrêt
-            <form id="edit_form">
-                <table>
-                    <tr>
-                        <td>
-                            <label for="edit_arret_id">Id</label>
-                        </td>
-                        <td>
-                            <input type="number" name="edit_arret_id" id="edit_arret_id" disabled required>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label for="edit_arret_nom">Nom</label>
-                        </td>
-                        <td>
-                            <input type="text" name="edit_arret_nom" id="edit_arret_nom" required placeholder="">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label for="edit_arret_ville">Ville</label>
-                        </td>
-                        <td>
-                            <input type="text" name="edit_arret_ville" id="edit_arret_ville" placeholder="">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td id="edit_form_submit">
-                            <input type="submit">
-                        </td>
-                    </tr>
-                </table>
-            </form>
-
-        </div>
-        </div>
-        
         
     </main>
     <footer>
         <!-- Merci de copier le footer depuis index.html une fois celui-ci
-            finalisé. -->
-        </footer>
-    </body>
+        finalisé. -->
+    </footer>
+</body>
