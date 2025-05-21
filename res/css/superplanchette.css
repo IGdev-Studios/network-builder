@@ -85,6 +85,11 @@ Rendu coté planchette finie
     300dpi w2480 h3508
     */
 }
+@media print{
+    #render{
+        border: white;
+    } 
+}
 /********/
 /* Pied */
 /********/

@@ -1,0 +1,3 @@
+*.code-workspace
+./res/php/db_info.php
+.\res\php\db_info.php

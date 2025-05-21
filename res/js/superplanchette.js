@@ -118,10 +118,6 @@ function changeAddPopup(element,valeur) {
     Ligne <input name="voitLigne" type="text"><br>
     N° de voiture <input name="voitNum" type="text">`
     break;
-    case "num_course":
-    document.querySelector('#newHoraire').innerHTML = `
-    N° de course <input name="courseNum" type="text">`
-    break;
     case "course":
     reloadNewStops()
     break;
@@ -135,7 +131,7 @@ function changeAddPopup(element,valeur) {
     <textarea name="notes" cols="40" rows="4" placeholder="Entrez vos notes ici..."></textarea>`
     break;
     default:
-    window.alert("erreur dans la mise à jour du popup");
+    window.alert("Erreur dans la mise à jour du popup");
     break;
   }
 }
@@ -159,6 +155,7 @@ function generateBtnBar(i,horaire) {
   edt.addEventListener("click", function(){
     // console.log(i)
     console.log(horaire)
+    jsonSave.horaire
     // Utiliser le Horaire, pour re-setup la fenêtre de modif.
   })
   // Fonction BTN Descendre
@@ -241,15 +238,23 @@ function generateBtnBar(i,horaire) {
         
         newStopsList.appendChild(divInput);
       };
+      // Créer le champ de numéro de course
+      inputCourse = document.createElement('input');
+      inputCourse.name = "courseNum";inputCourse.placeholder = ""
+      inputCourse.value = courseCode
+      inputCourse.addEventListener('change',()=>{ courseCode = inputCourse.value })
+      divCourse = document.createElement('div')
+      divCourse.append(inputCourse,document.createTextNode(" Numéro de Course (facultatif)"))
+      // Créer le champ de numéro de girouette
       inputGir = document.createElement('input');
       inputGir.name = "codeGir";inputGir.placeholder = "ex. 2501"
       inputGir.value = girCode
-      inputGir.addEventListener('change',()=>{
-        girCode = inputGir.value
-      })
+      inputGir.addEventListener('change',()=>{ girCode = inputGir.value })
+      divGir = document.createElement('div')
+      divGir.append(inputGir,document.createTextNode(" Code girouette (facultatif)"))
       // inputGir.append()
-      newStopsList.prepend(inputGir,document.createTextNode(" Code girouette (facultatif)"))
-    }    
+      newStopsList.prepend(divCourse,divGir)
+    }
   }
   function reloadRecapList() {
     newRecapList = document.querySelector('#newRecap')
@@ -338,20 +343,21 @@ function generateBtnBar(i,horaire) {
           "numero": document.querySelector('input[name="voitNum"]').value,
         })
       break;
-      case "num_course":
-      jsonSave.horaires.push({
-        "type": "num_course", 
-        "valeur": `${document.querySelector('input[name="courseNum"]').value}`
-      });
-      reloadHoraires()
-      break;
+      // case "num_course":
+      // jsonSave.horaires.push({
+      //   "type": "num_course", 
+      //   "valeur": `${document.querySelector('input[name="courseNum"]').value}`
+      // });
+      // reloadHoraires()
+      // break;
       case "course":
       jsonSave.horaires.push({
-        "type": "course", 
+        "type": "course",
+        "courseId":`${document.querySelector('input[name="courseNum"]').value}`,
         "gir":document.querySelector('input[name="codeGir"]').value,
         "arrets":addStopList
       })
-      stopsArray = [];girCode = ""
+      stopsArray = [];girCode = "";courseCode = ""
       reloadNewStops()
       reloadHoraires()
       break;        
@@ -485,45 +491,53 @@ function generateBtnBar(i,horaire) {
       switch (horaire.type) {
         case 'num_voiture':
           debugLevel>=2?console.groupCollapsed("Num Voiture"):null
+
           addType.innerHTML = "Voiture"
           poidsItem = 1
           addDiv.className = "h_main h_num_voiture"
           addValue.innerHTML = horaire.ligne+" - "+horaire.numero
           addDiv.appendChild(addType)
           addDiv.appendChild(addValue)
-          break;
-        case 'num_course':
-          debugLevel>=2?console.groupCollapsed("Num Course"):null
-          addType.innerHTML = "Course"
-        poidsItem = 1
-        addDiv.className = "h_main h_num_course"
-        addValue.innerHTML = horaire.valeur
-        addDiv.appendChild(addType)
-        addDiv.appendChild(addValue)
         break;
-        
+          
         case 'coupure':
-        debugLevel>=2?console.groupCollapsed("Coupure"):null
-        poidsItem = 1
-        addDiv.className = "h_main h_coupure"
-        addType.innerHTML = "Coupure"
-        addValue.innerHTML = horaire.heureDebut+"   "+horaire.heureFin
-        addDiv.appendChild(addType)
-        addDiv.appendChild(addValue)
+          debugLevel>=2?console.groupCollapsed("Coupure"):null
+
+          poidsItem = 1
+          addDiv.className = "h_main h_coupure"
+          addType.innerHTML = "Coupure"
+          addValue.innerHTML = horaire.heureDebut+"   "+horaire.heureFin
+          addDiv.appendChild(addType)
+          addDiv.appendChild(addValue)
         break;
         
         case 'note':
-        debugLevel>=2?console.groupCollapsed("Note"):null
-        poidsItem = 1
-        addDiv.className = "h_main h_note"
-        addText = document.createTextNode(horaire.note)
-        addDiv.appendChild(addText)
+          debugLevel>=2?console.groupCollapsed("Note"):null
+
+          poidsItem = 1
+          addDiv.className = "h_main h_note"
+          addText = document.createTextNode(horaire.note)
+          addDiv.appendChild(addText)
         break;
-        
+
         case 'course':
         debugLevel>=2?console.group("Course"):null
-        poidsItem = horaire.arrets.length
+
         addDiv.className = "h_main h_course"
+        // Gestion du poids
+        poidsItem = horaire.arrets.length
+        if ((horaire.courseId==undefined)||(horaire.courseId=="")) {
+          // on ne fait rien ici
+          null
+        }else{
+          poidsItem++
+          // Créer la ligne du code Course
+          addCourseId = document.createElement('div')
+          addCourseId.className = "h_num_course"
+          addCourseId.innerHTML = horaire.courseId
+          addDiv.appendChild(addCourseId)
+        }
+        // Créer la ligne du code Girouette
         addGir = document.createElement('div')
         addGir.className = "h_gir"
         // Ajout code gir (ou pas)
@@ -533,6 +547,7 @@ function generateBtnBar(i,horaire) {
           addGir.innerHTML = "gir"+horaire.gir
         }
         debugLevel>=2?console.log(addGir):null
+
         addDiv.appendChild(addGir)
         // boucle arrêts
         horaire.arrets.forEach((arret)=>{
@@ -611,6 +626,7 @@ function generateBtnBar(i,horaire) {
   
   stopsArray = [];
   girCode = "";
+  courseCode = "";
   recapArray = [];
   
   baseHTMLrecap = `<div>Voiture</div>
@@ -649,158 +665,136 @@ function generateBtnBar(i,horaire) {
       
     ]
   }
-  jsonDemo = {
+jsonDemo = {
     "entreprise":"SEMITAG",        // Nom entreprise
     "dateVigeur":"02/02/2023",        // Date en vigueur fiche
     "service":{
       "idService":"BUS - 001",     // 14 = Ligne; 002 = Service
-      "periode":"HI2223 - WE",       // HI = ???; 2122 = année debut/fin
+      "periode":"HI2122 - LVH",       // HI = HIVER; 2122 = année debut/fin
       "typeService":"dfoi",   // coma =  matin, copm = aprèm, dfoi = coupé
     },
     "recap":[
-      {   "voiture":["21 - 1"],     // Numéro(s) de voiture
+      {   "voiture":["11 - 1"],     // Numéro(s) de voiture
       "releveQui":[""],   // Service(s) relevé
-      "debutService":["7:40"],// Heure(s) début service
-      "lieuDebut":["TDV"],   // Lieu(x) début de service
-      "heureDebut":["7:58"],  // Heure(s) départ dépot
-      "heureFin":["16:38"],    // Heure(s) retout dépot
-      "lieuFin":["DAUPH"],     // Lieu(x) fin service
+      "debutService":["6:40"],// Heure(s) début service
+      "lieuDebut":["VORD"],   // Lieu(x) début de service
+      "heureDebut":["6:55"],  // Heure(s) départ dépot
+      "heureFin":["12:38"],    // Heure(s) retout dépot
+      "lieuFin":["GOND"],     // Lieu(x) fin service
       "relevePar":[""],   // Service(s) qui relève
-      "finService":["16:40"],  // Heure(s) fin service
+      "finService":["13:03"],  // Heure(s) fin service
     },
     {
-      "voiture":["25 - 4"],
-      "releveQui":[""],"debutService":["13:33"],
-      "lieuDebut":["DAUPH"],"heureDebut":["13:38"],
-      "heureFin":["17:25"],"lieuFin":["TDV"],
-      "relevePar":[""],"finService":["17:28"],  
+      "voiture":["12 - 4"],
+      "releveQui":[""],"debutService":["16:25"],
+      "lieuDebut":["GOND"],"heureDebut":["16:30"],
+      "heureFin":["20:25"],"lieuFin":["VORD"],
+      "relevePar":[""],"finService":["20:33"],  
     }
     
   ],               // Valable pour tous les sous catégories : ["",""] si service coupé
   "horaires":[
     {
       "type":"voiture",   // Type d'entrée
-      "valeur":"21 - 1",        // valeur
+      "valeur":"11 - 1",        // valeur
     },
     {
       "type":"course",
       "arrets":[
-        {"nom":"Transdev Dauphiné (Dépot Pon","horaire":"7:58"},
-        {"nom":"Le Prisme","horaire":"8:18",},
+        {"nom":"Dépôt Vorrepe","horaire":"5:54"},
+        {"nom":"VOIRON Gare R Sud","horaire":"6:08",},
       ]
     },
     {
-      "type":"course","gir":'2101',
+      "type":"course","courseId":"00-3","gir":'1101',
       "arrets":[
-        {"nom":"Le Prisme","horaire":"8:21",},
-        {"nom":"Pré Nouvel","horaire":"8:29",},
-        {"nom":"Col de Comboire","horaire":"8:32",},
-        {"nom":"Claix Mairie","horaire":"8:37",},
-        {"nom":"Pont Rouge","horaire":"8:41",}
-      ]
-    },
-    {
-      "type":"course",
-      "arrets":[
-        {"nom":"Pont Rouge","horaire":"8:41",},
-        {"nom":"Transdev Dauphiné (Dépot Pon","horaire":"8:53"}
-      ]
-    },
-    {"type":"coupure","heureFin":"9:08","heureDebut":"15:13"},
-    {"type":"voiture","valeur":"21 - 1"},
-    {
-      "type":"course",
-      "arrets":[
-        {"nom":"Transdev Dauphiné (Dépôt Pon","horaire":"15:25",},
-        {"nom":"Le Prisme","horaire":"15:44",}
-      ]
-    },
-    {
-      "type":'course',"gir":'2101',
-      "arrets":[
-        {"nom":"Le Prisme","horaire":"15:44",},
-        {"nom":"Pré Nouvel","horaire":"15:52",},
-        {"nom":"Col de Comboire","horaire":"15:55",},
-        {"nom":"Claix Mairie","horaire":"16:00",},
-        {"nom":"Pont Rouge","horaire":"16:05",}
+        {"nom":"VOIRON Gare R Sud","horaire":"6:10",},
+        {"nom":"Oxford","horaire":"6:30",},
+        {"nom":"Chavant","horaire":"6:50",},
+        {"nom":"Cloyères","horaire":"6:10",},
+        {"nom":"Longs Prés","horaire":"7:29",}
       ]
     },
     {
       "type":"course",
       "arrets":[
-        {"nom":"Pont Rouge","horaire":"16:05",},
-        {"nom":"Transdev Dauphiné DOMENE","horaire":"16:38",}
-      ]
-    },
-    {"type":"note","note":"Ce service s'effectue sur 2 jours"},
-    {"type":"coupure","heureDebut":"16:38","heureFin":"13:38"},
-    {"type":"voiture","valeur":"14 - 2"},
-    {
-      "type":"course",
-      "arrets":[
-        {"nom":"Transdev Dauphiné DOMENE","horaire":"13:38",},
-        {"nom":"Gières Gare - Universités","horaire":"13:54",}
+        {"nom":"Longs Prés","horaire":"7:29",},
+        {"nom":"Longs Prés","horaire":"7:30",}
       ]
     },
     {
-      "type":"course","gir":'1402',
+      "type":"course","courseId":"07-11","gir":'1112',
       "arrets":[
-        {"nom":"Gières Gare - Universités","horaire":"13:54"},
-        {"nom":"Coli","horaire":"14:00"},
-        {"nom":"Flandrin - Valmy","horaire":"14:06"},
-        {"nom":"Verdun - Prefecture","horaire":"14:10"},                
-      ],
-    },
-    {
-      "type":"course",
-      "arrets":[
-        {"nom":"Verdun - Prefecture","horaire":"14:11",},
-        {"nom":"Colonel Dumont","horaire":"14:28",}
+        {"nom":"Longs Prés","horaire":"7:40",},
+        {"nom":"Cloyères","horaire":"8:00",},
+        {"nom":"Chavant","horaire":"8:20",},
+        {"nom":"Oxford","horaire":"8:40",},
+        {"nom":"Centr'Alp 2","horaire":"8:55"},
+        {"nom":"VOIRON Gare R Sud","horaire":"9:06",}
       ]
     },
-    {"type":"note","note":"Grande pause à 15h06 à La Valonne"},
-    {"type":"note","note":"Nettoyage vehicule dépot Vif avant retour dépot PT-de-Claix"},
+    {"type":"note","note":"Ce service passe par Centr'Alp 2"},
     {
-      "type":"course","gir":'2502',
+      "type":"course","courseId":"00-27","gir":'1101',
       "arrets":[
-        {"nom":"Colonel Dumont","horaire":"14:30"},
-        {"nom":"Stade Lesdiguières","horaire":"14:37"},
-        {"nom":"L'Etoile","horaire":"14:44"},
-        {"nom":"Pont Rouge","horaire":"14:50"},
-        {"nom":"République","horaire":"14:58"},
-        {"nom":"Vif Mairie","horaire":"15:03"},
-        {"nom":"La Valonne","horaire":"15:06"},
-      ],
+        {"nom":"VOIRON Gare R Sud","horaire":"10:23",},
+        {"nom":"Oxford","horaire":"10:40",},
+        {"nom":"Chavant","horaire":"11:00",},
+        {"nom":"Cloyères","horaire":"11:20",},
+        {"nom":"Longs Prés","horaire":"11:42",}
+      ]
     },
     {
       "type":"course",
       "arrets":[
-        {"nom":"La Valonne","horaire":"15:06",},
-        {"nom":"La Valonne","horaire":"15:32",},
-        {"nom":"Colonel Dumont","horaire":"15:58",},
+        {"nom":"Longs Prés","horaire":"11:44",},
+        {"nom":"Dépôt Goncelin","horaire":"12:04"},
+      ]
+    },
+    {"type":"coupure","heureFin":"12:38","heureDebut":"16:30"},
+    {"type":"voiture","valeur":"12 - 4"},
+    {
+      "type":"course",
+      "arrets":[
+        {"nom":"Dépot Goncelin","horaire":"16:35",},
+        {"nom":"GONCELIN Gare","horaire":"16:40",}
       ]
     },
     {
-      "type":"course","gir":'2502',
+      "type":'course',"courseId":"01-23","gir":'1203',
       "arrets":[
-        {"nom":"Colonel Dumont","horaire":"16:00"},
-        {"nom":"Stade Lesdiguières","horaire":"16:07"},
-        {"nom":"L'Etoile","horaire":"16:14"},
-        {"nom":"Pont Rouge","horaire":"16:20"},
-        {"nom":"République","horaire":"16:28"},
-        {"nom":"Vif Mairie","horaire":"16:33"},
-        {"nom":"La Valonne","horaire":"16:36"},
-      ],
+        {"nom":"GONCELIN Gare","horaire":"17:00",},
+        {"nom":"BRIGNOUD Centre","horaire":"17:15",},
+        {"nom":"Chavant","horaire":"17:30",},
+        {"nom":"GRENOBLE Gare R","horaire":"17:45",}
+      ]
+    },
+    {
+      "type":'course',"courseId":"00-24","gir":'1202',
+      "arrets":[
+        {"nom":"GRENOBLE Gare R","horaire":"17:55",}
+        {"nom":"Chavant","horaire":"18:10",},
+        {"nom":"BRIGNOUD Centre","horaire":"18:25",},
+        {"nom":"GONCELIN Gare","horaire":"18:40",},
+      ]
+    },
+    {
+      "type":'course',"courseId":"01-25","gir":'1201',
+      "arrets":[
+        {"nom":"GONCELIN Gare","horaire":"19:00",},
+        {"nom":"BRIGNOUD Centre","horaire":"19:15",},
+        {"nom":"Chavant","horaire":"19:30",},
+        {"nom":"Oxford","horaire":"19:55",},
+        {"nom":"Champfeuillet","horaire":"20:15",}
+      ]
     },
     {
       "type":"course",
       "arrets":[
-        {"nom":"La Valonne","horaire":"16:36",},
-        {"nom":"Dépot Vif (Grindler)","horaire":"16:42",},
-        {"nom":"Dépot Vif (Grindler)","horaire":"17:04",},
-        {"nom":"Transdev Dauphiné (Dépôt Pon","horaire":"17:25",},
+        {"nom":"Champfeuillet","horaire":"20:15",},
+        {"nom":"Dépot Voreppe","horaire":"20:25",}
       ]
-    },
+    }
   ]
 }
 
@@ -832,6 +826,7 @@ jsonExport = {
     },
     {
       "type":"course",
+      "courseId":"",
       "gir":"",
       "arrets":[
         {
@@ -2040,6 +2035,8 @@ json_F6866 = {
 
 /*
 Todo list :
+MAJ Rendu quali de la planchette (via CTRL+P)
+  → Enlever header et left pannel
 MAJ Edition des éléments
 MAJ Dupliquer un élément
 MAJ Import<>Export

@@ -12,8 +12,7 @@
     <meta property="og:description" content="Générateur de planchettes conducteur en style HASTUS"> -->
     
     <!-- Script -->
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> -->
+
     <script src="./res/js/html2pdf.bundle.min.js"></script>
     <!-- <script src="./res/js/generic.js"></script> -->
     <script src="./res/js/superplanchette.js"></script>
@@ -24,6 +23,7 @@
     <link rel="stylesheet" type="text/css" href="./res/css/superplanchette.css">
     
 </head>
+<!-- Icones → https://pictogrammers.com/library/mdi/ -->
 <body>
     <header>
         <h1>Superplanchette</h1>
@@ -50,6 +50,7 @@
                     <span class="title">Boutons</span>
                     <div class="btn" onclick="showPopup('addPopup')">Ajouter un élément</div>
                     <div class="btn" onclick="reloadPlanchette()">Regénérer fiche</div>
+                    <div class="btn" onclick="reloadPlanchette(jsonDemo)">Générer Démo ()</div>
                     <div class="btn" onclick="reloadPlanchette(json_StServan_U1)">Générer Démo (StServan U)</div>
                     <div class="btn pdf" id="importJSON">Enregistrer en PDF</div>
                     <!-- <div class="btn impo">Importer (JSON)</div> -->
@@ -101,9 +102,9 @@
                     <div>Planchette générée par Network Builder Toolkit sur thecitadis.fr</div>
                 </div>
             </div>
-                <div id="reel" style="display: none">
+                <!-- <div id="reel" style="display: none">
                     <img src="https://cdn.discordapp.com/attachments/851355214447771688/1061751048022274098/20220724_132508546.jpg" alt="">
-                </div>
+                </div> -->
             </div>
     </main>
         <div id="addPopup" class="popup" style="display: none;">        
@@ -111,25 +112,26 @@
             <select id="typeHoraire">
                 <option value="" disabled selected>- Choissisez une option -</option>
                 <option value="num_voiture">🚍 Numéro de Voiture</option>
-                <option value="num_course">= Numéro de Course</option>
                 <option value="course">📋 Course</option>
                 <option value="coupure">🌙 Coupure</option>
                 <option value="note">📝 Note</option>
-                <option value="deplacement" disabled>↔ Déplacement</option>
+                <!-- <option value="deplacement" disabled>↔ Déplacement</option> -->
             </select>
             <div id="newHoraire">Veuillez selectionner une catégorie ci-dessus</div>
             <button onclick="hidePopup('addPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
             <button onclick="executeAddPopup()"><img src="./res/svg/plus-thick.svg" height="20"> Ajouter</button>
         </div>
-        <div id="editPopup" class="popup" style="display: none;">
+        <div id="editPopup" class="popup" style="display: ;">
             <h2>Edition</h2>
             <select name="" id="">
-                <option value="voiture">Voiture</option>
-                <option value="course">course</option>
-                <option value="coupure">coupure</option>
-                <option value="note">note</option>
+                <option value="num_voiture">🚍 Numéro de Voiture</option>
+                <option value="course">📋 Course</option>
+                <option value="coupure">🌙 Coupure</option>
+                <option value="note">📝 Note</option>
             </select>
+            <div id="editHoraire"></div>
             <button onclick="hidePopup('editPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
+            <button onclick="duplicate()"><img src="./res/svg/duplicate.svg" height="20"> Dupliquer</button>
             <button onclick="executeEditPopup()"><img src="./res/svg/pencil.svg" height="20"> Modifier</button>
         </div>
         <div id="servicePopup" class="popup" style="display: none;">
