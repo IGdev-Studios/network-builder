@@ -325,3 +325,16 @@ input[type="radio"] + label,.popup button,select{
         content: "Votre écran n'est pas assez grand pour afficher correctement le générateur. Veuillez revenir sur un ordinateur s'il-vous-plait.";
     }
 }
+@media print{
+    #render{
+        border: white;
+    }
+    header,#data{
+        display: none;
+    }
+    /* Instalation du texte en bas de page */
+    /* #horaires{    
+        min-height: 950px;
+    } */
+
+}
