@@ -342,6 +342,7 @@ function generateBtnBar(i,horaire) {
           "ligne" : document.querySelector('input[name="voitLigne"]').value,
           "numero": document.querySelector('input[name="voitNum"]').value,
         })
+        reloadHoraires()
       break;
       // case "num_course":
       // jsonSave.horaires.push({
