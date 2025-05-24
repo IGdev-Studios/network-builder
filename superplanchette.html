@@ -48,10 +48,13 @@
                 </div>
                 <div class="btn_box">
                     <span class="title">Boutons</span>
-                    <div class="btn" onclick="showPopup('addPopup')">Ajouter un élément</div>
+                    <div class="btn" onclick="showPopup('horairePopup','new')">Ajouter un élément</div>
                     <div class="btn" onclick="reloadPlanchette()">Regénérer fiche</div>
                     <div class="btn" onclick="reloadPlanchette(jsonDemo)">Générer Démo ()</div>
                     <div class="btn" onclick="reloadPlanchette(json_StServan_U1)">Générer Démo (StServan U)</div>
+                    <!-- <div class="btn" onclick="saveToLocalStorage(jsonData)">Enregistrer dans le LocalStorage</div> -->
+                    <!-- <div class="btn" onclick="loadFromLocalStorage()">Charger depuis le LocalStorage</div> -->
+                    <!-- <div class="btn" onclick="clearLocalStorage()">Vider le LocalStorage</div> -->
                     <div class="btn pdf" id="importJSON">Enregistrer en PDF</div>
                     <!-- <div class="btn impo">Importer (JSON)</div> -->
                     <!-- <div class="btn expo">Exporter (JSON)</div> -->
@@ -99,7 +102,7 @@
                     <div id="h_col3"></div>
                 </div>
                 <div id="pied">
-                    <div>Planchette générée par Network Builder Toolkit sur thecitadis.fr</div>
+                    <div>Planchette générée par Network Builder Toolkit sur nbt.thecitadis.fr</div>
                 </div>
             </div>
                 <!-- <div id="reel" style="display: none">
@@ -107,32 +110,23 @@
                 </div> -->
             </div>
     </main>
-        <div id="addPopup" class="popup" style="display: none;">        
-            <h2>Nouvel élément</h2>
-            <select id="typeHoraire">
-                <option value="" disabled selected>- Choissisez une option -</option>
-                <option value="num_voiture">🚍 Numéro de Voiture</option>
-                <option value="course">📋 Course</option>
-                <option value="coupure">🌙 Coupure</option>
-                <option value="note">📝 Note</option>
-                <!-- <option value="deplacement" disabled>↔ Déplacement</option> -->
+        <div id="horairePopup" class="popup" style="display: none;">
+            <!-- <div id="horairePopup" class="popup"> -->
+                <h2 class="hNew">Nouvel élément</h2>
+                <h2 class="hEdit" style="display: none;">Edition</h2>
+                <select id="typeHoraire">
+                    <option value="placeholder" disabled selected>- Choissisez une option -</option>
+                    <option value="voiture">🚍 Numéro de Voiture</option>
+                    <option value="course">📋 Course</option>
+                    <option value="coupure">🌙 Coupure</option>
+                    <option value="note">📝 Note</option>
+                    <!-- <option value="deplacement" disabled>↔ Déplacement</option> -->
             </select>
-            <div id="newHoraire">Veuillez selectionner une catégorie ci-dessus</div>
-            <button onclick="hidePopup('addPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
-            <button onclick="executeAddPopup()"><img src="./res/svg/plus-thick.svg" height="20"> Ajouter</button>
-        </div>
-        <div id="editPopup" class="popup" style="display: ;">
-            <h2>Edition</h2>
-            <select name="" id="">
-                <option value="num_voiture">🚍 Numéro de Voiture</option>
-                <option value="course">📋 Course</option>
-                <option value="coupure">🌙 Coupure</option>
-                <option value="note">📝 Note</option>
-            </select>
-            <div id="editHoraire"></div>
-            <button onclick="hidePopup('editPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
-            <button onclick="duplicate()"><img src="./res/svg/duplicate.svg" height="20"> Dupliquer</button>
-            <button onclick="executeEditPopup()"><img src="./res/svg/pencil.svg" height="20"> Modifier</button>
+            <div id="horaire">Veuillez selectionner une catégorie ci-dessus</div>
+            <button onclick="hidePopup('horairePopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
+            <button class="hNew" onclick="executeHorairePopup('add')"><img src="./res/svg/plus-thick.svg" height="20"> Ajouter</button>
+            <button class="hEdit" style="display: none;" onclick="executeHorairePopup('edit')"><img src="./res/svg/pencil.svg" height="20"> Modifier</button>
+            <!-- <button class="hEdit" style="display: none;" onclick="duplicateHoraire()"><img src="./res/svg/duplicate.svg" height="20"> Dupliquer</button> -->
         </div>
         <div id="servicePopup" class="popup" style="display: none;">
             <h2>Définitions planchette</h2>

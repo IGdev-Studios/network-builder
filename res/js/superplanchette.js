@@ -1,4 +1,4 @@
-const debugLevel = 0
+const debugLevel = 1
 // Niveau de debug
 //  0 = pas de debug
 //  1 = fonctions principales (boutons)
@@ -7,6 +7,8 @@ const debugLevel = 0
 /* Au chargenment de la page */
 
 window.onload = function(){
+  debugLevel>=1?console.log("Niveau de debug : ",debugLevel):null
+  debugLevel>=1?console.log("Chargement de la page"):null
   data=document.querySelector("#data")
   if (localStorage.getItem('display_help_img') == 'true'){
     document.querySelector("#reel").style = "display: block";
@@ -73,10 +75,10 @@ window.onload = function(){
   // Popup Ajout élément
   document.querySelectorAll('#typeHoraire').forEach((e)=>{
     e.onchange = function(){
-      changeAddPopup(e,e.value)
+      changeHorairePopup(e.value)
     }
   })
-  document.querySelector('#editPopup').onchange
+  // document.querySelector('#editPopup').onchange
   //// Code temporaire note de début
   
   // document.querySelector('#h_0')
@@ -93,9 +95,28 @@ window.onload = function(){
 * Ouvrir la Popup
 * @param {string} popupId - ID de la popup (sans le #)
 */
-function showPopup(popupId) {
+function showPopup(popupId,action=undefined) {
   debugLevel>=1?console.log("Ouvrir popup "+popupId):null
   document.querySelector("#"+popupId).style.display = "block";
+  if (action == 'edit') {
+    document.querySelectorAll('.hNew').forEach((e)=>{e.style.display = "none"})
+    document.querySelectorAll('.hEdit').forEach((e)=>{e.style.display = ""})
+    // On affiche les éléments de la popup d'édition
+    // on préremplit les champs avec les valeurs du JSON
+    
+  }else if (action == 'new'||((popupId == 'horairePopup')&&(action == undefined))) {
+    document.querySelectorAll('.hNew').forEach((e)=>{e.style.display = ""})
+    document.querySelectorAll('.hEdit').forEach((e)=>{e.style.display = "none"})
+    if (popupId == 'horairePopup') {
+      stopsArray = []
+      document.querySelector('#typeHoraire').value = ""
+      document.querySelector('#horaire').innerHTML = "Veuillez selectionner une catégorie ci-dessus"
+      document.querySelectorAll('#typeHoraire>option').forEach((e)=>{
+        e.removeAttribute('selected')
+      })
+      document.querySelector('#typeHoraire>option[value=placeholder]').setAttribute('selected','')
+    }
+  }
 }
 /**
 * Fermer la Popup
@@ -110,28 +131,50 @@ function hidePopup(popupId) {
 * @param {element} element Élément en question
 * @param {string} valeur Type de l'élément à rajouter
 */
-function changeAddPopup(element,valeur) {
-  document.querySelector('#newHoraire').innerHTML = ""
+function changeHorairePopup(valeur,mode=undefined,data=undefined) {
+  document.querySelector('#horaire').innerHTML = ""
+  if (mode == 'edit') {
+    document.querySelectorAll('#typeHoraire>option').forEach((e)=>{
+      e.removeAttribute('selected')
+    })
+    document.querySelector('#typeHoraire>option[value='+valeur+']').setAttribute('selected','')  
+  }
+  
   switch (valeur) {
-    case "num_voiture":
-    document.querySelector('#newHoraire').innerHTML = `
-    Ligne <input name="voitLigne" type="text"><br>
-    N° de voiture <input name="voitNum" type="text">`
+    case "voiture":
+      console.log("Voiture")
+      document.querySelector('#horaire').innerHTML = `
+      Ligne <input name="voitLigne" type="text"><br>
+      N° de voiture <input name="voitNum" type="text">`
+      if (mode == 'edit') {
+        document.querySelector('input[name="voitLigne"]').setAttribute('value',data.ligne)
+        document.querySelector('input[name="voitNum"]').setAttribute('value',data.numero)
+      }
     break;
     case "course":
-    reloadNewStops()
+      console.log("Course")
+      reloadStops(data)
     break;
     case "coupure":
-    document.querySelector('#newHoraire').innerHTML = `
-    Heure de début <input name="coupDeb" type="time"><br>
-    Heure de fin <input name="coupFin" type="time">`
+      console.log("Coupure")
+      document.querySelector('#horaire').innerHTML = `
+      Heure de début <input name="coupDeb" type="time"><br>
+      Heure de fin <input name="coupFin" type="time">`
+      if (mode == 'edit') {
+        document.querySelector('input[name="coupDeb"]').setAttribute('value',data.heureDebut)
+        document.querySelector('input[name="coupFin"]').setAttribute('value',data.heureFin)
+      }
     break;
     case "note":
-    document.querySelector('#newHoraire').innerHTML = `
-    <textarea name="notes" cols="40" rows="4" placeholder="Entrez vos notes ici..."></textarea>`
+      console.log("Note")
+      document.querySelector('#horaire').innerHTML = `
+      <textarea name="notes" cols="40" rows="4" placeholder="Entrez vos notes ici..."></textarea>`
+      if (mode == 'edit') {
+        document.querySelector('textarea[name="notes"]').innerHTML = data.note
+      }
     break;
     default:
-    window.alert("Erreur dans la mise à jour du popup");
+      window.alert("Erreur dans la mise à jour du popup : Valeur non définie ",valeur);
     break;
   }
 }
@@ -143,20 +186,28 @@ function changeAddPopup(element,valeur) {
 */
 function generateBtnBar(i,horaire) {
   let edt = document.createElement('button');
+  let dup = document.createElement('button');
   let mdn = document.createElement('button');
   let mup = document.createElement('button');
   let del = document.createElement('button');
   let bar = document.createElement('div');
-  edt.innerHTML = "Edit" // ✏
-  mdn.innerHTML = "↓"
-  mup.innerHTML = "↑"
-  del.innerHTML = "▬"
+  edt.innerHTML = '<img src="./res/svg/pencil.svg" height="15"/>' //"Edit" ✏
+  dup.innerHTML = '<img src="./res/svg/duplicate.svg" height="15"/>' //"Dupliquer" 📋
+  mdn.innerHTML = '<img src="./res/svg/arrow-down-drop-circle.svg" height="15"/>' //"↓"
+  mup.innerHTML = '<img src="./res/svg/arrow-up-drop-circle.svg" height="15"/>' //"↑"
+  del.innerHTML = '<img src="./res/svg/delete.svg" height="15"/>' //"▬"
   // Fonction BTN Edit
+  // Quand le bouton Edit est cliqué
   edt.addEventListener("click", function(){
-    // console.log(i)
+    editID = i
     console.log(horaire)
-    jsonSave.horaire
-    // Utiliser le Horaire, pour re-setup la fenêtre de modif.
+    showPopup('horairePopup','edit')
+    changeHorairePopup(jsonSave.horaires[i].type,'edit',jsonSave.horaires[i])
+  })
+  // Fonction BTN Dupliquer
+  dup.addEventListener("click", function(){
+    editID = i
+    duplicateHoraire()
   })
   // Fonction BTN Descendre
   mdn.addEventListener("click", function(){
@@ -173,464 +224,558 @@ function generateBtnBar(i,horaire) {
   // Fonction BTN Supprimer
   del.addEventListener("click", function(){
     jsonSave.horaires.splice(i, 1);
-    reloadHoraires()})
-    bar.className = "h_btnBar"
-    bar.appendChild(edt); bar.appendChild(mdn);  bar.appendChild(mup);  bar.appendChild(del);
-    return bar;
+    reloadHoraires()
+  })
+  bar.className = "h_btnBar"
+  bar.appendChild(edt)
+  bar.appendChild(dup)
+  bar.appendChild(mdn)
+  bar.appendChild(mup)
+  bar.appendChild(del);
+  return bar;
+}
+/**
+* Re-génère les arrêts en cours d'ajout
+*/
+function reloadStops(data=undefined) {
+  stopsList = document.querySelector('#horaire')
+  stopsList.innerHTML = '';
+  if (data != undefined) {
+    // console.log("Data arrets",data.arrets)
+    stopsArray = data.arrets
+    girCode = data.gir
+    courseCode = data.courseId
   }
-  /**
-  * Re-génère les arrêts en cours d'ajout
-  */
-  function reloadNewStops() {
-    newStopsList = document.querySelector('#newHoraire')
-    newStopsList.innerHTML = '';
-    if (stopsArray.length == 0) {
-      stopsArray.push({nom:"",horaire:"--:--"});
-      reloadNewStops()
-    } else {
-      for(let i = 0; i < stopsArray.length; i++){
-        let e = stopsArray[i];
-        // Création des élements nécessaires
-        let divInput = document.createElement('div');
-        let inputArret = document.createElement('input'); inputArret.type = 'text';
-        let inputTime = document.createElement('input'); inputTime.type = 'time';
+  if (stopsArray.length == 0) {
+    stopsArray.push({nom:"",horaire:"--:--"});
+    reloadStops()
+  } else {
+    for(let i = 0; i < stopsArray.length; i++){
+      let e = stopsArray[i];
+
+      // Création des élements nécessaires
+      let divInput = document.createElement('div');
+      let inputArret = document.createElement('input'); inputArret.type = 'text';
+      let inputTime = document.createElement('input'); inputTime.type = 'time';
         
-        // Input nom arrêt
-        inputArret.value = e.nom;
-        inputArret.placeholder = "Nom de l'arrêt";
-        inputArret.addEventListener('change', () => {
-          let index = stopsArray.indexOf(e);
-          stopsArray[index].nom = inputArret.value;
-        })
-        divInput.appendChild(inputArret);
+      // Input nom arrêt
+      debugLevel>=2?console.log("Nom arret",e.nom):null
+      inputArret.value = e.nom;
+      inputArret.placeholder = "Nom de l'arrêt";
+      inputArret.addEventListener('change', () => {
+        let index = stopsArray.indexOf(e);
+        stopsArray[index].nom = inputArret.value;
+      })
+      divInput.appendChild(inputArret);
+      
+      // Input temps arrêt
+      debugLevel>=2?console.log("Horaire arret",e.horaire):null
+      inputTime.value = e.horaire;
+      inputTime.addEventListener('change', () => {
+        let index = stopsArray.indexOf(e);
+        stopsArray[index].horaire = inputTime.value;
+      })
+      divInput.appendChild(inputTime);   
+      
+      // Bouton ajout arrêt en dessous
+      let pdn = document.createElement('button');pdn.innerHTML = '<img src="./res/svg/table-row-plus-after.svg" height="20"/>';
+      pdn.addEventListener('click', () => {
+        stopsArray.splice(i+1, 0, {nom:"",horaire:"--:--"});
+        reloadStops();
+      })
+      divInput.appendChild(pdn);
+       
+      // Bouton ajout arrêt au dessus
+      let pup = document.createElement('button');pup.innerHTML = '<img src="./res/svg/table-row-plus-before.svg" height="20"/>';
+      pup.addEventListener('click', () => {
+        stopsArray.splice(i, 0, {nom:"",horaire:"--:--"});
+        reloadStops();
+      })
+      divInput.appendChild(pup);
+       
+      // Boutton suppression arrêt
+      let del = document.createElement('button');del.innerHTML = '<img src="./res/svg/table-row-remove.svg" height="20"/>';
+      del.addEventListener('click', () => {
+        stopsArray.splice(i, 1);
+        reloadStops();
+      })
+      divInput.appendChild(del);
         
-        // Input temps arrêt
-        inputTime.value = e.horaire;
-        inputTime.addEventListener('change', () => {
-          let index = stopsArray.indexOf(e);
-          stopsArray[index].horaire = inputTime.value;
-        })
-        divInput.appendChild(inputTime);   
-        
-        // Bouton ajout arrêt en dessous
-        let pdn = document.createElement('button');pdn.innerHTML = '↓';
-        pdn.addEventListener('click', () => {
-          stopsArray.splice(i+1, 0, {nom:"",horaire:"--:--"});
-          reloadNewStops();
-        })
-        divInput.appendChild(pdn);
-        
-        // Bouton ajout arrêt au dessus
-        let pup = document.createElement('button');pup.innerHTML = '↑';
-        pup.addEventListener('click', () => {
-          stopsArray.splice(i, 0, {nom:"",horaire:"--:--"});
-          reloadNewStops();
-        })
-        divInput.appendChild(pup);
-        
-        // Boutton suppression arrêt
-        let del = document.createElement('button');del.innerHTML = '▬';
-        del.addEventListener('click', () => {
-          stopsArray.splice(i, 1);
-          reloadNewStops();
-        })
-        divInput.appendChild(del);
-        
-        newStopsList.appendChild(divInput);
-      };
-      // Créer le champ de numéro de course
-      inputCourse = document.createElement('input');
-      inputCourse.name = "courseNum";inputCourse.placeholder = ""
-      inputCourse.value = courseCode
-      inputCourse.addEventListener('change',()=>{ courseCode = inputCourse.value })
-      divCourse = document.createElement('div')
-      divCourse.append(inputCourse,document.createTextNode(" Numéro de Course (facultatif)"))
-      // Créer le champ de numéro de girouette
-      inputGir = document.createElement('input');
-      inputGir.name = "codeGir";inputGir.placeholder = "ex. 2501"
-      inputGir.value = girCode
-      inputGir.addEventListener('change',()=>{ girCode = inputGir.value })
-      divGir = document.createElement('div')
-      divGir.append(inputGir,document.createTextNode(" Code girouette (facultatif)"))
-      // inputGir.append()
-      newStopsList.prepend(divCourse,divGir)
-    }
+      stopsList.appendChild(divInput);
+    };
+
+    // Créer le champ de numéro de course
+    inputCourse = document.createElement('input');
+    inputCourse.name = "courseNum";inputCourse.placeholder = ""
+    inputCourse.value = courseCode
+    inputCourse.addEventListener('change',()=>{ courseCode = inputCourse.value })
+    divCourse = document.createElement('div')
+    divCourse.append(inputCourse,document.createTextNode(" Numéro de Course (facultatif)"))
+
+    // Créer le champ de numéro de girouette
+    inputGir = document.createElement('input');
+    inputGir.name = "codeGir";inputGir.placeholder = "ex. 2501"
+    inputGir.value = girCode
+    inputGir.addEventListener('change',()=>{ girCode = inputGir.value })
+    divGir = document.createElement('div')
+    divGir.append(inputGir,document.createTextNode(" Code girouette (facultatif)"))
+  
+    stopsList.prepend(divCourse,divGir)
   }
-  function reloadRecapList() {
-    newRecapList = document.querySelector('#newRecap')
-    newRecapList.innerHTML = baseHTMLrecap+"<div>Bouttons</div>"
-    if (recapArray.length == 0) {
-      recapArray.push({"voiture":"","releveQui":"","debutService":"","lieuDebut":"","heureDebut":"","heureFin":"","lieuFin":"","relevePar":"","finService":""})
-      reloadRecapList()
-    } else {
-      for (let i = 0; i < recapArray.length; i++) {
-        let recap = recapArray[i];
-        // Création des éléments nessesaire
-        let inputVoiture = document.createElement('input');inputVoiture.type = 'text';inputVoiture.name = "voiture"
-        let inputReleveQui = document.createElement('input');inputReleveQui.type = 'text';inputReleveQui.name = "releveQui"
-        let inputDebutService = document.createElement('input');inputDebutService.type = 'time';inputDebutService.name = "debutService"
-        let inputLieuDebut = document.createElement('input');inputLieuDebut.type = 'text';inputLieuDebut.name = "lieuDebut"
-        let inputHeureDebut = document.createElement('input');inputHeureDebut.type = 'time';inputHeureDebut.name = "heureDebut"
-        let inputHeureFin = document.createElement('input');inputHeureFin.type = 'time';inputHeureFin.name = "heureFin"
-        let inputLieuFin = document.createElement('input');inputLieuFin.type = 'text';inputLieuFin.name = "lieuFin"
-        let inputRelevePar = document.createElement('input');inputRelevePar.type = 'text';inputRelevePar.name = "relevePar"
-        let inputFinService = document.createElement('input');inputFinService.type = 'time';inputFinService.name = "finService"
-        
-        // Assignation des valeurs
-        inputVoiture.value = recap.voiture
-        inputReleveQui.value = recap.releveQui
-        inputDebutService.value = recap.debutService
-        inputLieuDebut.value = recap.lieuDebut
-        inputHeureDebut.value = recap.heureDebut
-        inputHeureFin.value = recap.heureFin
-        inputLieuFin.value = recap.lieuFin
-        inputRelevePar.value = recap.relevePar
-        inputFinService.value = recap.finService
-        
-        // Assignation des écouteurs
-        inputVoiture.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].voiture = inputVoiture.value;})
-        inputReleveQui.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].releveQui = inputReleveQui.value;})
-        inputDebutService.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].debutService = inputDebutService.value;})
-        inputLieuDebut.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].lieuDebut = inputLieuDebut.value;})
-        inputHeureDebut.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].heureDebut = inputHeureDebut.value;})
-        inputHeureFin.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].heureFin = inputHeureFin.value;})
-        inputLieuFin.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].lieuFin = inputLieuFin.value;})
-        inputRelevePar.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].relevePar = inputRelevePar.value;})
-        inputFinService.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].finService = inputFinService.value;})
-        
-        // Ajout des balises dans le DOM
-        newRecapList.appendChild(inputVoiture)
-        newRecapList.appendChild(inputReleveQui)
-        newRecapList.appendChild(inputDebutService)
-        newRecapList.appendChild(inputLieuDebut)
-        newRecapList.appendChild(inputHeureDebut)
-        newRecapList.appendChild(inputHeureFin)
-        newRecapList.appendChild(inputLieuFin)
-        newRecapList.appendChild(inputRelevePar)
-        newRecapList.appendChild(inputFinService)
-        
-        // Boutons 
-        let pdn = document.createElement('button');pdn.innerHTML = '<img src="./res/svg/table-row-plus-after.svg" height="20" alt="↓">';
-        let pup = document.createElement('button');pup.innerHTML = '<img src="./res/svg/table-row-plus-before.svg" height="20" alt="↑">';
-        let del = document.createElement('button');del.innerHTML = '<img src="./res/svg/table-row-remove.svg" height="20" alt="▬">';
-        
-        pdn.addEventListener('click',()=>{recapArray.splice(i+1, 0, {"voiture":"","releveQui":"","debutService":"","lieuDebut":"","heureDebut":"","heureFin":"","lieuFin":"","relevePar":"","finService":""});reloadRecapList();}) 
-        pup.addEventListener('click',()=>{recapArray.splice(i, 0, {"voiture":"","releveQui":"","debutService":"","lieuDebut":"","heureDebut":"","heureFin":"","lieuFin":"","relevePar":"","finService":""});reloadRecapList()});
-        del.addEventListener('click',()=>{recapArray.splice(i, 1);reloadRecapList()});
-        
-        divBtn = document.createElement('div');
-        divBtn.appendChild(pdn);
-        divBtn.appendChild(pup);
-        divBtn.appendChild(del);
-        
-        newRecapList.appendChild(divBtn)
-      }  
-    }
+}
+function reloadRecapList() {
+  newRecapList = document.querySelector('#newRecap')
+  newRecapList.innerHTML = baseHTMLrecap+"<div>Bouttons</div>"
+  if (recapArray.length == 0) {
+    recapArray.push({"voiture":"","releveQui":"","debutService":"","lieuDebut":"","heureDebut":"","heureFin":"","lieuFin":"","relevePar":"","finService":""})
+    reloadRecapList()
+  } else {
+    for (let i = 0; i < recapArray.length; i++) {
+      let recap = recapArray[i];
+      // Création des éléments nessesaire
+      let inputVoiture = document.createElement('input');inputVoiture.type = 'text';inputVoiture.name = "voiture"
+      let inputReleveQui = document.createElement('input');inputReleveQui.type = 'text';inputReleveQui.name = "releveQui"
+      let inputDebutService = document.createElement('input');inputDebutService.type = 'time';inputDebutService.name = "debutService"
+      let inputLieuDebut = document.createElement('input');inputLieuDebut.type = 'text';inputLieuDebut.name = "lieuDebut"
+      let inputHeureDebut = document.createElement('input');inputHeureDebut.type = 'time';inputHeureDebut.name = "heureDebut"
+      let inputHeureFin = document.createElement('input');inputHeureFin.type = 'time';inputHeureFin.name = "heureFin"
+      let inputLieuFin = document.createElement('input');inputLieuFin.type = 'text';inputLieuFin.name = "lieuFin"
+      let inputRelevePar = document.createElement('input');inputRelevePar.type = 'text';inputRelevePar.name = "relevePar"
+      let inputFinService = document.createElement('input');inputFinService.type = 'time';inputFinService.name = "finService"
+      
+      // Assignation des valeurs
+      inputVoiture.value = recap.voiture
+      inputReleveQui.value = recap.releveQui
+      inputDebutService.value = recap.debutService
+      inputLieuDebut.value = recap.lieuDebut
+      inputHeureDebut.value = recap.heureDebut
+      inputHeureFin.value = recap.heureFin
+      inputLieuFin.value = recap.lieuFin
+      inputRelevePar.value = recap.relevePar
+      inputFinService.value = recap.finService
+      
+      // Assignation des écouteurs
+      inputVoiture.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].voiture = inputVoiture.value;})
+      inputReleveQui.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].releveQui = inputReleveQui.value;})
+      inputDebutService.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].debutService = inputDebutService.value;})
+      inputLieuDebut.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].lieuDebut = inputLieuDebut.value;})
+      inputHeureDebut.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].heureDebut = inputHeureDebut.value;})
+      inputHeureFin.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].heureFin = inputHeureFin.value;})
+      inputLieuFin.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].lieuFin = inputLieuFin.value;})
+      inputRelevePar.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].relevePar = inputRelevePar.value;})
+      inputFinService.addEventListener('change',()=>{recapArray[recapArray.indexOf(recap)].finService = inputFinService.value;})
+      
+      // Ajout des balises dans le DOM
+      newRecapList.appendChild(inputVoiture)
+      newRecapList.appendChild(inputReleveQui)
+      newRecapList.appendChild(inputDebutService)
+      newRecapList.appendChild(inputLieuDebut)
+      newRecapList.appendChild(inputHeureDebut)
+      newRecapList.appendChild(inputHeureFin)
+      newRecapList.appendChild(inputLieuFin)
+      newRecapList.appendChild(inputRelevePar)
+      newRecapList.appendChild(inputFinService)
+      
+      // Boutons 
+      let pdn = document.createElement('button');pdn.innerHTML = '<img src="./res/svg/table-row-plus-after.svg" height="20" alt="↓">';
+      let pup = document.createElement('button');pup.innerHTML = '<img src="./res/svg/table-row-plus-before.svg" height="20" alt="↑">';
+      let del = document.createElement('button');del.innerHTML = '<img src="./res/svg/table-row-remove.svg" height="20" alt="▬">';
+      
+      pdn.addEventListener('click',()=>{recapArray.splice(i+1, 0, {"voiture":"","releveQui":"","debutService":"","lieuDebut":"","heureDebut":"","heureFin":"","lieuFin":"","relevePar":"","finService":""});reloadRecapList();}) 
+      pup.addEventListener('click',()=>{recapArray.splice(i, 0, {"voiture":"","releveQui":"","debutService":"","lieuDebut":"","heureDebut":"","heureFin":"","lieuFin":"","relevePar":"","finService":""});reloadRecapList()});
+      del.addEventListener('click',()=>{recapArray.splice(i, 1);reloadRecapList()});
+      
+      divBtn = document.createElement('div');
+      divBtn.appendChild(pdn);
+      divBtn.appendChild(pup);
+      divBtn.appendChild(del);
+      
+      newRecapList.appendChild(divBtn)
+    }  
   }
-  /**
-  * Executer l'ajout d'une case d'horaires depuis la popup d'ajout.
-  * Traite le format depuis la popup et l'insère dans la variable de sauvegarde
-  */
-  function executeAddPopup() {
-    let typeAjout = document.querySelector('#typeHoraire').value;
-    let addStopList = stopsArray
-    
-    switch (typeAjout) {
-      case "num_voiture":
-        jsonSave.horaires.push({
-          "type": "num_voiture",
-          "ligne" : document.querySelector('input[name="voitLigne"]').value,
-          "numero": document.querySelector('input[name="voitNum"]').value,
-        })
-        reloadHoraires()
-      break;
-      // case "num_course":
-      // jsonSave.horaires.push({
-      //   "type": "num_course", 
-      //   "valeur": `${document.querySelector('input[name="courseNum"]').value}`
-      // });
-      // reloadHoraires()
-      // break;
-      case "course":
-      jsonSave.horaires.push({
+}
+
+/**
+ *  Dupliquer un horaire
+ */
+
+function duplicateHoraire() {
+  i = editID
+  debugLevel>=1?console.log("Dupliquer l'horaire n°",i):null
+  // On duplique l'horaire
+  let horaireToDuplicate = jsonSave.horaires[i];
+  // On ajoute l'horaire dupliqué après l'horaire d'origine
+  jsonSave.horaires.splice(i+1, 0, JSON.parse(JSON.stringify(horaireToDuplicate)));
+  // On recharge les horaires
+  reloadHoraires();
+}
+
+/**
+* Executer l'ajout d'une case d'horaires depuis la popup d'ajout.
+* Traite le format depuis la popup et l'insère dans la variable de sauvegarde
+* @param {string} action - Action à effectuer : add ou edit
+*/
+function executeHorairePopup(action) {
+  i = editID
+  debugLevel>=1?console.log("Exécution de la popup d'horaire, action:",action,"i:",i):null
+
+  let typeAjout = document.querySelector('#typeHoraire').value;
+  let addStopList = stopsArray
+  let horaireToExecute = {}
+  
+  switch (typeAjout) {
+    case "voiture":
+      horaireToExecute = {
+        "type": "voiture",
+        "ligne" : document.querySelector('input[name="voitLigne"]').value,
+        "numero": document.querySelector('input[name="voitNum"]').value,
+      }
+      reloadHoraires()
+    break;
+    case "course":
+      horaireToExecute = {
         "type": "course",
         "courseId":`${document.querySelector('input[name="courseNum"]').value}`,
         "gir":document.querySelector('input[name="codeGir"]').value,
         "arrets":addStopList
-      })
+      }
       stopsArray = [];girCode = "";courseCode = ""
-      reloadNewStops()
+      reloadStops()
       reloadHoraires()
-      break;        
-      case "coupure":
-      jsonSave.horaires.push({
+    break;        
+    case "coupure":
+      horaireToExecute = {
         "type": "coupure",
         "heureDebut": document.querySelector('input[name="coupDeb"]').value,
         "heureFin": document.querySelector('input[name="coupFin"]').value
-      })
+      }
       reloadHoraires()
-      break;
-      case "note":
-      jsonSave.horaires.push({
+    break;
+    case "note":
+      horaireToExecute = {
         "type": "note",
         "note": document.querySelector('textarea[name="notes"]').value
-      })
+      }
       reloadHoraires()
-      break;
-      default:
+    break;
+    default:
       window.alert("erreur dans la mise à jour du popup");
+    break;
+  }
+  // Si action == 'add' : on ajoute un horaire
+  // Si action == 'edit' : on modifie un horaire
+  switch (action) {
+    case "edit":
+      jsonSave.horaires.splice(i, 1);
+      jsonSave.horaires.splice(i, 0, horaireToExecute);
+      reloadHoraires()
+    break;
+    case "add":
+      jsonSave.horaires.push(horaireToExecute);
+      reloadHoraires()
+    break;
+    default:
+      window.alert("Erreur dans l'exécution de la popup : action non définie")
+    break;
+  }
+  // On cache la popup
+  hidePopup('horairePopup')
+}
+function executeServicePopup() {
+  jsonSave.service.idService = document.querySelector('#ser_id').value;
+  jsonSave.service.periode = document.querySelector('#ser_peri').value;
+  jsonSave.service.typeService = document.querySelector('input[name="typeService"]:checked').value;
+    
+  reloadResume()
+  hidePopup('servicePopup')
+}
+function executeRecapPopup() {
+  jsonSave.recap = recapArray;
+  reloadResume()
+  hidePopup('recapPopup')    
+}
+/** Re-générer la planchette avec le contenu du JSON de la page.
+* A appeller lorsque le JSON est modifié
+* @param {*}jsonData : Objet JSON des données de la planchette
+*/
+function reloadPlanchette(jsonData = jsonSave) {
+  debugLevel>=1?console.log("Regénération de la planchette avec les données suivantes",jsonData):null
+  jsonSave = jsonData
+  reloadHeadline(jsonData)
+  reloadResume(jsonData)
+  reloadHoraires(jsonData)  
+}
+/** Re-générer la headline de la planchette
+* A appeller lorsque le JSON est modifié 
+* @param {*} jsonData 
+*/
+function reloadHeadline(jsonData = jsonSave) {
+  // On ré-ecrit la headline
+  document.getElementById('entreprise').innerHTML = jsonData.entreprise
+  document.getElementById('dateVigeur').innerHTML = `En vigueur: ${jsonData.dateVigeur}`
+}
+/** Re-générer la ligne de résumé de la planchette
+* A appeller lorsque le JSON est modifié
+* @param {*} jsonData 
+*/
+function reloadResume(jsonData = jsonSave) {
+  // On récupère les outils nessesaire
+  serviceId = document.querySelector('#service')
+  recapId = document.querySelector("#recap")  
+  // On réinitialise le résumé
+  serviceId.innerHTML = ""
+  recapId.innerHTML = baseHTMLrecap
+  // On ré-ecrit le carré d'info planchette
+  serviceId.innerHTML += `<div id="idService">${jsonData.service.idService}</div>`
+  serviceId.innerHTML += `<div id="periodeService">${jsonData.service.periode}</div>`
+  serviceId.innerHTML += `<div>Type<br>jrn.<br>${jsonData.service.typeService}</div>`
+  // On ré-ecrit le recap
+  jsonData.recap.forEach((r)=>{
+    toAdd = ""
+    toAdd += `<div>${r.voiture}</div>`
+    toAdd += `<div>${r.releveQui}</div>`
+    toAdd += `<div>${r.debutService}</div>`
+    toAdd += `<div>${r.lieuDebut}</div>`
+    toAdd += `<div>${r.heureDebut}</div>`
+    toAdd += `<div>${r.heureFin}</div>`
+    toAdd += `<div>${r.lieuFin}</div>`
+    toAdd += `<div>${r.relevePar}</div>`
+    toAdd += `<div>${r.finService}</div>`
+    
+    recapId.innerHTML += toAdd
+  })
+}
+
+/** Re-générer les horaires de la planchette.
+* A appeller lorsque le JSON des horaires est modifié
+* @param {*}jsonData : Objet JSON des données de la planchette
+*/
+function reloadHoraires(jsonData = jsonSave) {
+  // On récupère les outils nessesaire
+  horairesId = document.querySelector("#horaires")
+  h_col1 = document.querySelector('#h_col1')
+  h_col2 = document.querySelector('#h_col2')
+  h_col3 = document.querySelector('#h_col3')
+  // On réinitialise les horaires
+  h_col1.innerHTML = "";h_col2.innerHTML = "";h_col3.innerHTML = ""
+  // On initialise les poids
+  poidsMaxTotal = 0
+  poidsMaxColone = 0
+  poidsMaxReste = 0
+  poidsCumulTotal = 0
+  poidsCumulColone = 0
+  numColone = 1
+  // On affecte un poids à chaque horaire pour découper la liste en 3
+  jsonData.horaires.forEach((horaire)=>{
+    if (horaire.type == 'course') {
+      poidsMaxTotal += horaire.arrets.length
+    }else{poidsMaxTotal += 1}
+  })
+  poidsMaxColone = Math.floor(poidsMaxTotal/3)
+  poidsMaxReste = poidsMaxTotal%3
+  
+  // On ré-ecrit les horaires
+  jsonData.horaires.forEach((horaire)=>{
+    index = jsonData.horaires.indexOf(horaire)
+    indexId = "h_"+index
+    poidsItem = 0
+    addDiv = document.createElement("div")
+    addType = document.createElement('span')
+    addValue = document.createElement('span')
+    addDiv.id = indexId
+    addBtnBar = generateBtnBar(index,horaire)
+    
+    // toAdd = "" // OLD
+    switch (horaire.type) {
+      case 'voiture':
+        debugLevel>=2?console.groupCollapsed("Voiture"):null
+        addType.innerHTML = "Voiture"
+        poidsItem = 1
+        addDiv.className = "h_main h_num_voiture"
+        addValue.innerHTML = horaire.ligne+" - "+horaire.numero
+        addDiv.appendChild(addType)
+        addDiv.appendChild(addValue)
+      break;
+        
+      case 'coupure':
+        debugLevel>=2?console.groupCollapsed("Coupure"):null
+        poidsItem = 1
+        addDiv.className = "h_main h_coupure"
+        addType.innerHTML = "Coupure"
+        addValue.innerHTML = horaire.heureDebut+"   "+horaire.heureFin
+        addDiv.appendChild(addType)
+        addDiv.appendChild(addValue)
+      break;
+      
+      case 'note':
+        debugLevel>=2?console.groupCollapsed("Note"):null
+        poidsItem = 1
+        addDiv.className = "h_main h_note"
+        addText = document.createTextNode(horaire.note)
+        addDiv.appendChild(addText)
+      break;
+      case 'course':
+      debugLevel>=2?console.group("Course"):null
+      addDiv.className = "h_main h_course"
+      // Gestion du poids
+      poidsItem = horaire.arrets.length
+      if ((horaire.courseId==undefined)||(horaire.courseId=="")) {
+        // on ne fait rien ici
+        null
+      }else{
+        poidsItem++
+        // Créer la ligne du code Course
+        addCourseId = document.createElement('div')
+        addCourseId.className = "h_num_course"
+        addCourseId.innerHTML += "Course "
+        addCourseId.innerHTML += horaire.courseId
+        addDiv.appendChild(addCourseId)
+      }
+      // Créer la ligne du code Girouette
+      addGir = document.createElement('div')
+      addGir.className = "h_gir"
+      // Ajout code gir (ou pas)
+      if ((horaire.gir == undefined)||(horaire.gir=="")) {
+        addGir.innerHTML = "-"
+      }else{
+        addGir.innerHTML = "gir"+horaire.gir
+      }
+      debugLevel>=2?console.log(addGir):null
+      addDiv.appendChild(addGir)
+      // boucle arrêts
+      horaire.arrets.forEach((arret)=>{
+        addArr = document.createElement('div')
+        // Check si terminus haut ou bas
+        switch (arret) {
+          case horaire.arrets[0]:
+          case horaire.arrets[horaire.arrets.length-1]:
+          addArr.className = "h_ter"
+          break;
+          
+          default:
+          addArr.className = "h_arr"
+          break;
+        }
+        // On ajoute nom et horaire de l'arrêt
+        addArrNom = document.createElement('span')
+        addArrNom.innerHTML = arret.nom
+        addArrHor = document.createElement('span')
+        addArrHor.innerHTML = arret.horaire
+        addArr.appendChild(addArrNom)
+        addArr.appendChild(addArrHor)
+        addDiv.appendChild(addArr)
+      })      
+      break;        
+      default:  
+      console.log("Value in switch statement:", horaire.type); 
+      console.error("Erreur Switch : type d'horaire indéfini")
+      window.alert("Erreur Switch : type d'horaire indéfini")
       break;
     }
-    hidePopup('addPopup')
-  }
-  function executeServicePopup() {
-    jsonSave.service.idService = document.querySelector('#ser_id').value;
-    jsonSave.service.periode = document.querySelector('#ser_peri').value;
-    jsonSave.service.typeService = document.querySelector('input[name="typeService"]:checked').value;
+    // Après génération, ajouter la barre de boutons
+    addDiv.appendChild(addBtnBar)
+    debugLevel>=2?console.log(addDiv):null
     
-    reloadResume()
-    hidePopup('servicePopup')
-  }
-  function executeRecapPopup() {
-    jsonSave.recap = recapArray;
-    reloadResume()
-    hidePopup('recapPopup')
-    
-  }
-  /** Re-générer la planchette avec le contenu du JSON de la page.
-  * A appeller lorsque le JSON est modifié
-  * @param {*}jsonData : Objet JSON des données de la planchette
-  */
-  function reloadPlanchette(jsonData = jsonSave) {
-    debugLevel>=1?console.log("Regénération de la planchette avec les données suivantes",jsonData):null
-    jsonSave = jsonData
-    reloadHeadline(jsonData)
-    reloadResume(jsonData)
-    reloadHoraires(jsonData)  
-  }
-  /** Re-générer la headline de la planchette
-  * A appeller lorsque le JSON est modifié 
-  * @param {*} jsonData 
-  */
-  function reloadHeadline(jsonData = jsonSave) {
-    // On ré-ecrit la headline
-    document.getElementById('entreprise').innerHTML = jsonData.entreprise
-    document.getElementById('dateVigeur').innerHTML = `En vigueur: ${jsonData.dateVigeur}`
-  }
-  /** Re-générer la ligne de résumé de la planchette
-  * A appeller lorsque le JSON est modifié
-  * @param {*} jsonData 
-  */
-  function reloadResume(jsonData = jsonSave) {
-    // On récupère les outils nessesaire
-    serviceId = document.querySelector('#service')
-    recapId = document.querySelector("#recap")  
-    // On réinitialise le résumé
-    serviceId.innerHTML = ""
-    recapId.innerHTML = baseHTMLrecap
-    // On ré-ecrit le carré d'info planchette
-    serviceId.innerHTML += `<div id="idService">${jsonData.service.idService}</div>`
-    serviceId.innerHTML += `<div id="periodeService">${jsonData.service.periode}</div>`
-    serviceId.innerHTML += `<div>Type<br>jrn.<br>${jsonData.service.typeService}</div>`
-    // On ré-ecrit le recap
-    jsonData.recap.forEach((r)=>{
-      toAdd = ""
-      toAdd += `<div>${r.voiture}</div>`
-      toAdd += `<div>${r.releveQui}</div>`
-      toAdd += `<div>${r.debutService}</div>`
-      toAdd += `<div>${r.lieuDebut}</div>`
-      toAdd += `<div>${r.heureDebut}</div>`
-      toAdd += `<div>${r.heureFin}</div>`
-      toAdd += `<div>${r.lieuFin}</div>`
-      toAdd += `<div>${r.relevePar}</div>`
-      toAdd += `<div>${r.finService}</div>`
-      
-      recapId.innerHTML += toAdd
-    })
-  }
-  
-  /** Re-générer les horaires de la planchette.
-  * A appeller lorsque le JSON des horaires est modifié
-  * @param {*}jsonData : Objet JSON des données de la planchette
-  */
-  function reloadHoraires(jsonData = jsonSave) {
-    // On récupère les outils nessesaire
-    horairesId = document.querySelector("#horaires")
-    h_col1 = document.querySelector('#h_col1')
-    h_col2 = document.querySelector('#h_col2')
-    h_col3 = document.querySelector('#h_col3')
-    // On réinitialise les horaires
-    h_col1.innerHTML = "";h_col2.innerHTML = "";h_col3.innerHTML = ""
-    // On initialise les poids
-    poidsMaxTotal = 0
-    poidsMaxColone = 0
-    poidsMaxReste = 0
-    poidsCumulTotal = 0
-    poidsCumulColone = 0
-    numColone = 1
-    // On affecte un poids à chaque horaire pour découper la liste en 3
-    jsonData.horaires.forEach((horaire)=>{
-      if (horaire.type == 'course') {
-        poidsMaxTotal += horaire.arrets.length
-      }else{poidsMaxTotal += 1}
-    })
-    poidsMaxColone = Math.floor(poidsMaxTotal/3)
-    poidsMaxReste = poidsMaxTotal%3
-    
-    // On ré-ecrit les horaires
-    jsonData.horaires.forEach((horaire)=>{
-      index = jsonData.horaires.indexOf(horaire)
-      indexId = "h_"+index
-      poidsItem = 0
-      addDiv = document.createElement("div")
-      addType = document.createElement('span')
-      addValue = document.createElement('span')
-      addDiv.id = indexId
-      addBtnBar = generateBtnBar(index,horaire)
-      
-      // toAdd = "" // OLD
-      switch (horaire.type) {
-        case 'num_voiture':
-          debugLevel>=2?console.groupCollapsed("Num Voiture"):null
-
-          addType.innerHTML = "Voiture"
-          poidsItem = 1
-          addDiv.className = "h_main h_num_voiture"
-          addValue.innerHTML = horaire.ligne+" - "+horaire.numero
-          addDiv.appendChild(addType)
-          addDiv.appendChild(addValue)
-        break;
-          
-        case 'coupure':
-          debugLevel>=2?console.groupCollapsed("Coupure"):null
-
-          poidsItem = 1
-          addDiv.className = "h_main h_coupure"
-          addType.innerHTML = "Coupure"
-          addValue.innerHTML = horaire.heureDebut+"   "+horaire.heureFin
-          addDiv.appendChild(addType)
-          addDiv.appendChild(addValue)
-        break;
-        
-        case 'note':
-          debugLevel>=2?console.groupCollapsed("Note"):null
-
-          poidsItem = 1
-          addDiv.className = "h_main h_note"
-          addText = document.createTextNode(horaire.note)
-          addDiv.appendChild(addText)
-        break;
-
-        case 'course':
-        debugLevel>=2?console.group("Course"):null
-
-        addDiv.className = "h_main h_course"
-        // Gestion du poids
-        poidsItem = horaire.arrets.length
-        if ((horaire.courseId==undefined)||(horaire.courseId=="")) {
-          // on ne fait rien ici
-          null
-        }else{
-          poidsItem++
-          // Créer la ligne du code Course
-          addCourseId = document.createElement('div')
-          addCourseId.className = "h_num_course"
-          addCourseId.innerHTML = horaire.courseId
-          addDiv.appendChild(addCourseId)
-        }
-        // Créer la ligne du code Girouette
-        addGir = document.createElement('div')
-        addGir.className = "h_gir"
-        // Ajout code gir (ou pas)
-        if ((horaire.gir == undefined)||(horaire.gir=="")) {
-          addGir.innerHTML = "-"
-        }else{
-          addGir.innerHTML = "gir"+horaire.gir
-        }
-        debugLevel>=2?console.log(addGir):null
-
-        addDiv.appendChild(addGir)
-        // boucle arrêts
-        horaire.arrets.forEach((arret)=>{
-          addArr = document.createElement('div')
-          // Check si terminus haut ou bas
-          switch (arret) {
-            case horaire.arrets[0]:
-            case horaire.arrets[horaire.arrets.length-1]:
-            addArr.className = "h_ter"
-            break;
-            
-            default:
-            addArr.className = "h_arr"
-            break;
-          }
-          // On ajoute nom et horaire de l'arrêt
-          addArrNom = document.createElement('span')
-          addArrNom.innerHTML = arret.nom
-          addArrHor = document.createElement('span')
-          addArrHor.innerHTML = arret.horaire
-          addArr.appendChild(addArrNom)
-          addArr.appendChild(addArrHor)
-          addDiv.appendChild(addArr)
-        })      
-        break;        
-        default:
-        console.error("Erreur Switch : type d'horaire indéfini")
-        window.alert("Erreur Switch : type d'horaire indéfini")
-        break;
-      }
-      // Après génération, ajouter la barre de boutons
-      addDiv.appendChild(addBtnBar)
-      debugLevel>=2?console.log(addDiv):null
-      
-      // Placement des horaires
-      switch (numColone){
-        case 1:
-        if ((poidsCumulColone+poidsItem)<=(poidsMaxColone+poidsMaxReste)) {
-          h_col1.appendChild(addDiv)
-          poidsCumulColone += poidsItem
-          poidsCumulTotal += poidsItem
-        } else {
-          numColone++
-          poidsCumulColone = poidsItem
-          h_col2.appendChild(addDiv)
-          poidsCumulTotal += poidsItem
-        }
-        break;
-        case 2:
-        if ((poidsCumulColone+poidsItem)<=(poidsMaxColone+poidsMaxReste)) {
-          h_col2.appendChild(addDiv)
-          poidsCumulColone += poidsItem
-          poidsCumulTotal += poidsItem
-        } else {
-          numColone++
-          poidsCumulColone = poidsItem
-          h_col3.appendChild(addDiv)
-          poidsCumulTotal += poidsItem
-        }
-        break;
-        case 3:
-        h_col3.appendChild(addDiv)
+    // Placement des horaires
+    switch (numColone){
+      case 1:
+      if ((poidsCumulColone+poidsItem)<=(poidsMaxColone+poidsMaxReste)) {
+        h_col1.appendChild(addDiv)
         poidsCumulColone += poidsItem
         poidsCumulTotal += poidsItem
-        break;
-        default:
-        window.alert("Erreur : Cas non prévu.")
-        break;
+      } else {
+        numColone++
+        poidsCumulColone = poidsItem
+        h_col2.appendChild(addDiv)
+        poidsCumulTotal += poidsItem
       }
-      debugLevel>=2?console.groupEnd():null
-    })
+      break;
+      case 2:
+      if ((poidsCumulColone+poidsItem)<=(poidsMaxColone+poidsMaxReste)) {
+        h_col2.appendChild(addDiv)
+        poidsCumulColone += poidsItem
+        poidsCumulTotal += poidsItem
+      } else {
+        numColone++
+        poidsCumulColone = poidsItem
+        h_col3.appendChild(addDiv)
+        poidsCumulTotal += poidsItem
+      }
+      break;
+      case 3:
+      h_col3.appendChild(addDiv)
+      poidsCumulColone += poidsItem
+      poidsCumulTotal += poidsItem
+      break;
+      default:
+      window.alert("Erreur : Cas non prévu.")
+      break;
+    }
+    debugLevel>=2?console.groupEnd():null
+  })
+}
+
+// Fonctions de sauvegarde et chargement localStorage
+// A court terme, on sauvegarde une planchette dans le localStorage du navigateur
+// A moyen terme, on devrait pouvoir sauvegarder plusieurs planchettes dans le localStorage du navigateur
+// A long terme, on devrait pouvoir sauvegarder dans un fichier JSON
+
+function saveToLocalStorage(jsonData) {
+  debugLevel>=1?console.log("Sauvegarde dans le localStorage",jsonData):null
+  // On demande le nom de la sauvegarde
+  window.alert("La planchette sera sauvegardée dans le localStorage du navigateur. Vous pouvez la retrouver dans l'onglet 'Application' de votre navigateur, dans la section 'Stockage local'.");
+  window.alert("Pour charger une planchette sauvegardée, utilisez le bouton 'Charger depuis le localStorage'.");
+  window.alert("Pour effacer le localStorage, utilisez le bouton 'Effacer le localStorage'.");
+  // On sauvegarde le JSON dans le localStorage
+  localStorage.setItem("donneesPlanchette",JSON.stringify(jsonData));
+  // On affiche un message de confirmation
+  document.querySelector("#saveMessage").innerHTML = "Planchette sauvegardée !"
+  setTimeout(() => {
+    document.querySelector("#saveMessage").innerHTML = ""
+  }, 2000);  
+}
+function loadFromLocalStorage() {
+  debugLevel>=1?console.log("Chargement depuis le localStorage"):null
+  // On charge le JSON depuis le localStorage
+  if (localStorage.getItem("donneesPlanchette") != null) {
+    jsonData = JSON.parse(localStorage.getItem("donneesPlanchette"));
+    reloadPlanchette(jsonData);
+    document.querySelector("#loadMessage").innerHTML = "Planchette chargée !"
+    setTimeout(() => {
+      document.querySelector("#loadMessage").innerHTML = ""
+    }, 2000);
+  } else {
+    window.alert("Aucune planchette sauvegardée dans le localStorage")
   }
-  //
-  // Variables page
-  //
-  
-  stopsArray = [];
-  girCode = "";
-  courseCode = "";
-  recapArray = [];
-  
-  baseHTMLrecap = `<div>Voiture</div>
+}
+function clearLocalStorage() {
+  debugLevel>=1?console.log("Effacement du localStorage"):null
+  // On demande confirmation
+  if (!window.confirm("Êtes-vous sûr de vouloir effacer le localStorage ? Toutes les données seront perdues.")) {
+    debugLevel>=1?console.log("Effacement annulé"):null
+    return;
+  }
+  debugLevel>=1?console.log("Effacement du localStorage"):null
+  // On efface le localStorage
+  localStorage.removeItem("donneesPlanchette");
+  // On affiche un message de confirmation
+  document.querySelector("#clearMessage").innerHTML = "Planchette effacée !"
+  setTimeout(() => {
+    document.querySelector("#clearMessage").innerHTML = ""
+  }, 2000);
+}
+
+//
+// Variables page
+//
+
+stopsArray = []; // Tableau des arrêts de la course en cours d'édition
+girCode = ""; // Code de girouette de la course en cours d'édition
+courseCode = ""; // Code de course de la course en cours d'édition
+recapArray = []; // Tableau des récapitulatifs de service en cours d'édition
+editID = -1; // ID de l'horaire en cours d'édition
+
+baseHTMLrecap = `<div>Voiture</div>
   <div>Relève<br>qui</div>
   <div>Début<br>service</div>
   <div>Lieu<br>début</div>
@@ -640,32 +785,32 @@ function generateBtnBar(i,horaire) {
   <div>Relevé<br>par</div>
   <div>Fin<br>service</div>
   <!-- Fin tête tableau -->`
-  // Format sauvegarde JSON : 
-  jsonSave = {
-    "entreprise":"",        // Nom entreprise
-    "dateVigeur":"",        // Date en vigueur fiche
-    "service":{
-      "idService":"",     // Identifiant service
-      "periode":"",       // Periode d'activité service
-      "typeService":"",   // Service matin, aprèm, ou coupé
+// Format sauvegarde JSON : 
+jsonSave = {
+  "entreprise":"",        // Nom entreprise
+  "dateVigeur":"",        // Date en vigueur fiche
+  "service":{
+    "idService":"",     // Identifiant service
+    "periode":"",       // Periode d'activité service
+    "typeService":"",   // Service matin, aprèm, ou coupé
+  },
+  "recap":[
+    {               // Valable pour tous les sous catégories : ["",""] si service coupé
+      "voiture":"",     // Numéro(s) de voiture
+      "releveQui":"",   // Service(s) relevé
+      "debutService":"",// Heure(s) début service
+      "lieuDebut":"",   // Lieu(x) début de service
+      "heureDebut":"",  // Heure(s) départ dépot
+      "heureFin":"",    // Heure(s) retout dépot
+      "lieuFin":"",     // Lieu(x) fin service
+      "relevePar":"",   // Service(s) qui relève
+      "finService":"",  // Heure(s) fin service
     },
-    "recap":[
-      {               // Valable pour tous les sous catégories : ["",""] si service coupé
-        "voiture":"",     // Numéro(s) de voiture
-        "releveQui":"",   // Service(s) relevé
-        "debutService":"",// Heure(s) début service
-        "lieuDebut":"",   // Lieu(x) début de service
-        "heureDebut":"",  // Heure(s) départ dépot
-        "heureFin":"",    // Heure(s) retout dépot
-        "lieuFin":"",     // Lieu(x) fin service
-        "relevePar":"",   // Service(s) qui relève
-        "finService":"",  // Heure(s) fin service
-      },
-    ],
-    "horaires":[
-      
-    ]
-  }
+  ],
+  "horaires":[
+    
+  ]
+}
 jsonDemo = {
     "entreprise":"SEMITAG",        // Nom entreprise
     "dateVigeur":"02/02/2023",        // Date en vigueur fiche
@@ -677,9 +822,9 @@ jsonDemo = {
     "recap":[
       {   "voiture":["11 - 1"],     // Numéro(s) de voiture
       "releveQui":[""],   // Service(s) relevé
-      "debutService":["6:40"],// Heure(s) début service
+      "debutService":["06:40"],// Heure(s) début service
       "lieuDebut":["VORD"],   // Lieu(x) début de service
-      "heureDebut":["6:55"],  // Heure(s) départ dépot
+      "heureDebut":["06:55"],  // Heure(s) départ dépot
       "heureFin":["12:38"],    // Heure(s) retout dépot
       "lieuFin":["GOND"],     // Lieu(x) fin service
       "relevePar":[""],   // Service(s) qui relève
@@ -695,43 +840,40 @@ jsonDemo = {
     
   ],               // Valable pour tous les sous catégories : ["",""] si service coupé
   "horaires":[
-    {
-      "type":"voiture",   // Type d'entrée
-      "valeur":"11 - 1",        // valeur
-    },
+    {"type": "voiture","ligne": "11","numero":"1"},
     {
       "type":"course",
       "arrets":[
-        {"nom":"Dépôt Vorrepe","horaire":"5:54"},
-        {"nom":"VOIRON Gare R Sud","horaire":"6:08",},
+        {"nom":"Dépôt Vorrepe","horaire":"05:54"},
+        {"nom":"VOIRON Gare R Sud","horaire":"06:08",},
       ]
     },
     {
       "type":"course","courseId":"00-3","gir":'1101',
       "arrets":[
-        {"nom":"VOIRON Gare R Sud","horaire":"6:10",},
-        {"nom":"Oxford","horaire":"6:30",},
-        {"nom":"Chavant","horaire":"6:50",},
-        {"nom":"Cloyères","horaire":"6:10",},
-        {"nom":"Longs Prés","horaire":"7:29",}
+        {"nom":"VOIRON Gare R Sud","horaire":"06:10",},
+        {"nom":"Oxford","horaire":"06:30",},
+        {"nom":"Chavant","horaire":"06:50",},
+        {"nom":"Cloyères","horaire":"06:10",},
+        {"nom":"Longs Prés","horaire":"07:29",}
       ]
     },
     {
       "type":"course",
       "arrets":[
-        {"nom":"Longs Prés","horaire":"7:29",},
-        {"nom":"Longs Prés","horaire":"7:30",}
+        {"nom":"Longs Prés","horaire":"07:29",},
+        {"nom":"Longs Prés","horaire":"07:30",}
       ]
     },
     {
       "type":"course","courseId":"07-11","gir":'1112',
       "arrets":[
-        {"nom":"Longs Prés","horaire":"7:40",},
-        {"nom":"Cloyères","horaire":"8:00",},
-        {"nom":"Chavant","horaire":"8:20",},
-        {"nom":"Oxford","horaire":"8:40",},
-        {"nom":"Centr'Alp 2","horaire":"8:55"},
-        {"nom":"VOIRON Gare R Sud","horaire":"9:06",}
+        {"nom":"Longs Prés","horaire":"07:40",},
+        {"nom":"Cloyères","horaire":"08:00",},
+        {"nom":"Chavant","horaire":"08:20",},
+        {"nom":"Oxford","horaire":"08:40",},
+        {"nom":"Centr'Alp 2","horaire":"08:55"},
+        {"nom":"VOIRON Gare R Sud","horaire":"09:06",}
       ]
     },
     {"type":"note","note":"Ce service passe par Centr'Alp 2"},
@@ -752,8 +894,8 @@ jsonDemo = {
         {"nom":"Dépôt Goncelin","horaire":"12:04"},
       ]
     },
-    {"type":"coupure","heureFin":"12:38","heureDebut":"16:30"},
-    {"type":"voiture","valeur":"12 - 4"},
+    {"type":"coupure","heureDebut":"12:38","heureFin":"16:30"},
+    {"type": "voiture","ligne": "12","numero":"4"},
     {
       "type":"course",
       "arrets":[
@@ -773,10 +915,10 @@ jsonDemo = {
     {
       "type":'course',"courseId":"00-24","gir":'1202',
       "arrets":[
-        {"nom":"GRENOBLE Gare R","horaire":"17:55",}
+        {"nom":"GRENOBLE Gare R","horaire":"17:55",},
         {"nom":"Chavant","horaire":"18:10",},
         {"nom":"BRIGNOUD Centre","horaire":"18:25",},
-        {"nom":"GONCELIN Gare","horaire":"18:40",},
+        {"nom":"GONCELIN Gare","horaire":"18:40",}
       ]
     },
     {
@@ -864,9 +1006,9 @@ json_StServan_U1 = {
     {
       "voiture": "U - 01",
       "releveQui": "",
-      "debutService": "5:53",
+      "debutService": "05:53",
       "lieuDebut": "AURAY",
-      "heureDebut": "6:08",
+      "heureDebut": "06:08",
       "heureFin": "10:00",
       "lieuFin": "AURAY",
       "relevePar": "",
@@ -886,7 +1028,7 @@ json_StServan_U1 = {
   ],
   "horaires": [
     {
-      "type": "num_voiture",
+      "type": "voiture",
       "ligne": "U",
       "numero":"01"
     },
@@ -895,11 +1037,11 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "AURAY VOYAGES",
-          "horaire": "6:08"
+          "horaire": "06:08"
         },
         {
           "nom": "Maison Blanche",
-          "horaire": "6:16"
+          "horaire": "06:16"
         }
       ]
     },
@@ -909,23 +1051,23 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Maison Blanche",
-          "horaire": "6:16"
+          "horaire": "06:16"
         },
         {
           "nom": "Beaulieu Rosa Parks",
-          "horaire": "6:18"
+          "horaire": "06:18"
         },
         {
           "nom": "Pasteur",
-          "horaire": "6:21"
+          "horaire": "06:21"
         },
         {
           "nom": "UJM",
-          "horaire": "6:26"
+          "horaire": "06:26"
         },
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "6:28"
+          "horaire": "06:28"
         }
       ]
     },
@@ -934,11 +1076,11 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "6:31"
+          "horaire": "06:31"
         },
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "6:31"
+          "horaire": "06:31"
         }
       ]
     },
@@ -948,23 +1090,23 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "6:31"
+          "horaire": "06:31"
         },
         {
           "nom": "UJM",
-          "horaire": "6:34"
+          "horaire": "06:34"
         },
         {
           "nom": "Pasteur",
-          "horaire": "6:39"
+          "horaire": "06:39"
         },
         {
           "nom": "Beaulieu Rosa Parks",
-          "horaire": "6:42"
+          "horaire": "06:42"
         },
         {
           "nom": "Maison Blanche",
-          "horaire": "6:44"
+          "horaire": "06:44"
         }
       ]
     },
@@ -973,11 +1115,11 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Maison Blanche",
-          "horaire": "6:44"
+          "horaire": "06:44"
         },
         {
           "nom": "Maison Blanche",
-          "horaire": "6:45"
+          "horaire": "06:45"
         }
       ]
     },
@@ -987,23 +1129,23 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Maison Blanche",
-          "horaire": "6:48"
+          "horaire": "06:48"
         },
         {
           "nom": "Beaulieu Rosa Parks",
-          "horaire": "6:50"
+          "horaire": "06:50"
         },
         {
           "nom": "Pasteur",
-          "horaire": "6:53"
+          "horaire": "06:53"
         },
         {
           "nom": "UJM",
-          "horaire": "6:58"
+          "horaire": "06:58"
         },
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "7:00"
+          "horaire": "07:00"
         }
       ]
     },
@@ -1012,11 +1154,11 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "7:03"
+          "horaire": "07:03"
         },
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "7:03"
+          "horaire": "07:03"
         }
       ]
     },
@@ -1026,7 +1168,7 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "7:03"
+          "horaire": "07:03"
         },
         {
           "nom": "UJM",
@@ -1034,15 +1176,15 @@ json_StServan_U1 = {
         },
         {
           "nom": "Pasteur",
-          "horaire": "7:11"
+          "horaire": "07:11"
         },
         {
           "nom": "Beaulieu Rosa Parks",
-          "horaire": "7:14"
+          "horaire": "07:14"
         },
         {
           "nom": "Maison Blanche",
-          "horaire": "7:16"
+          "horaire": "07:16"
         }
       ]
     },
@@ -1051,11 +1193,11 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Maison Blanche",
-          "horaire": "7:16"
+          "horaire": "07:16"
         },
         {
           "nom": "Maison Blanche",
-          "horaire": "7:17"
+          "horaire": "07:17"
         }
       ]
     },
@@ -1065,23 +1207,23 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Maison Blanche",
-          "horaire": "7:27"
+          "horaire": "07:27"
         },
         {
           "nom": "Beaulieu Rosa Parks",
-          "horaire": "7:29"
+          "horaire": "07:29"
         },
         {
           "nom": "Pasteur",
-          "horaire": "7:32"
+          "horaire": "07:32"
         },
         {
           "nom": "UJM",
-          "horaire": "7:37"
+          "horaire": "07:37"
         },
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "7:42"
+          "horaire": "07:42"
         }
       ]
     },
@@ -1090,11 +1232,11 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "7:42"
+          "horaire": "07:42"
         },
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "7:42"
+          "horaire": "07:42"
         }
       ]
     },
@@ -1104,23 +1246,23 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "7:42"
+          "horaire": "07:42"
         },
         {
           "nom": "UJM",
-          "horaire": "7:45"
+          "horaire": "07:45"
         },
         {
           "nom": "Pasteur",
-          "horaire": "7:50"
+          "horaire": "07:50"
         },
         {
           "nom": "Beaulieu Rosa Parks",
-          "horaire": "7:53"
+          "horaire": "07:53"
         },
         {
           "nom": "Maison Blanche",
-          "horaire": "7:55"
+          "horaire": "07:55"
         }
       ]
     },
@@ -1129,11 +1271,11 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Maison Blanche",
-          "horaire": "7:55"
+          "horaire": "07:55"
         },
         {
           "nom": "Maison Blanche",
-          "horaire": "7:56"
+          "horaire": "07:56"
         }
       ]
     },
@@ -1143,23 +1285,23 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Maison Blanche",
-          "horaire": "8:04"
+          "horaire": "08:04"
         },
         {
           "nom": "Beaulieu Rosa Parks",
-          "horaire": "8:06"
+          "horaire": "08:06"
         },
         {
           "nom": "Pasteur",
-          "horaire": "8:09"
+          "horaire": "08:09"
         },
         {
           "nom": "UJM",
-          "horaire": "8:14"
+          "horaire": "08:14"
         },
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "8:16"
+          "horaire": "08:16"
         }
       ]
     },
@@ -1168,11 +1310,11 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "8:20"
+          "horaire": "08:20"
         },
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "8:20"
+          "horaire": "08:20"
         }
       ]
     },
@@ -1182,23 +1324,23 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "8:20"
+          "horaire": "08:20"
         },
         {
           "nom": "UJM",
-          "horaire": "8:23"
+          "horaire": "08:23"
         },
         {
           "nom": "Pasteur",
-          "horaire": "8:28"
+          "horaire": "08:28"
         },
         {
           "nom": "Beaulieu Rosa Parks",
-          "horaire": "8:31"
+          "horaire": "08:31"
         },
         {
           "nom": "Maison Blanche",
-          "horaire": "8:33"
+          "horaire": "08:33"
         }
       ]
     },
@@ -1207,11 +1349,11 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Maison Blanche",
-          "horaire": "8:33"
+          "horaire": "08:33"
         },
         {
           "nom": "Maison Blanche",
-          "horaire": "8:34"
+          "horaire": "08:34"
         }
       ]
     },
@@ -1221,23 +1363,23 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Maison Blanche",
-          "horaire": "8:53"
+          "horaire": "08:53"
         },
         {
           "nom": "Beaulieu Rosa Parks",
-          "horaire": "8:55"
+          "horaire": "08:55"
         },
         {
           "nom": "Pasteur",
-          "horaire": "8:58"
+          "horaire": "08:58"
         },
         {
           "nom": "UJM",
-          "horaire": "9:02"
+          "horaire": "09:02"
         },
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "9:05"
+          "horaire": "09:05"
         }
       ]
     },
@@ -1246,11 +1388,11 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "9:08"
+          "horaire": "09:08"
         },
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "9:08"
+          "horaire": "09:08"
         }
       ]
     },
@@ -1260,23 +1402,23 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "9:08"
+          "horaire": "09:08"
         },
         {
           "nom": "UJM",
-          "horaire": "9:11"
+          "horaire": "09:11"
         },
         {
           "nom": "Pasteur",
-          "horaire": "9:16"
+          "horaire": "09:16"
         },
         {
           "nom": "Beaulieu Rosa Parks",
-          "horaire": "9:19"
+          "horaire": "09:19"
         },
         {
           "nom": "Maison Blanche",
-          "horaire": "9:21"
+          "horaire": "09:21"
         }
       ]
     },
@@ -1285,11 +1427,11 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Maison Blanche",
-          "horaire": "9:21"
+          "horaire": "09:21"
         },
         {
           "nom": "Maison Blanche",
-          "horaire": "9:22"
+          "horaire": "09:22"
         }
       ]
     },
@@ -1299,23 +1441,23 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Maison Blanche",
-          "horaire": "9:26"
+          "horaire": "09:26"
         },
         {
           "nom": "Beaulieu Rosa Parks",
-          "horaire": "9:28"
+          "horaire": "09:28"
         },
         {
           "nom": "Pasteur",
-          "horaire": "9:31"
+          "horaire": "09:31"
         },
         {
           "nom": "UJM",
-          "horaire": "9:36"
+          "horaire": "09:36"
         },
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "9:38"
+          "horaire": "09:38"
         }
       ]
     },
@@ -1324,11 +1466,11 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "9:41"
+          "horaire": "09:41"
         },
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "9:41"
+          "horaire": "09:41"
         }
       ]
     },
@@ -1338,23 +1480,23 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Restaurant Universitaire",
-          "horaire": "9:41"
+          "horaire": "09:41"
         },
         {
           "nom": "UJM",
-          "horaire": "9:44"
+          "horaire": "09:44"
         },
         {
           "nom": "Pasteur",
-          "horaire": "9:49"
+          "horaire": "09:49"
         },
         {
           "nom": "Beaulieu Rosa Parks",
-          "horaire": "9:52"
+          "horaire": "09:52"
         },
         {
           "nom": "Maison Blanche",
-          "horaire": "9:54"
+          "horaire": "09:54"
         }
       ]
     },
@@ -1363,7 +1505,7 @@ json_StServan_U1 = {
       "arrets": [
         {
           "nom": "Maison Blanche",
-          "horaire": "9:21"
+          "horaire": "09:54"
         },
         {
           "nom": "AURAY VOYAGES",
@@ -1377,7 +1519,7 @@ json_StServan_U1 = {
       "heureDebut": "16:09"
     },
     {
-      "type": "num_voiture",
+      "type": "voiture",
       "ligne": "U",
       "numero":"01"
     },
@@ -2036,11 +2178,14 @@ json_F6866 = {
 
 /*
 Todo list :
-MAJ Rendu quali de la planchette (via CTRL+P)
-  → Enlever header et left pannel
+
+MAJ Notes par courses, séparées des notes globales
 MAJ Edition des éléments
 MAJ Dupliquer un élément
 MAJ Import<>Export
-MAJ Choix entre horaire type num de voiture et num de Course
 MAJ Horaire type Déplacement
+MAJ Remplacer les popup par un panneau latéral ?
+  → un panneau qui s'affiche à la place des boutons si un élement
+  est selectionné et qui sert à la modification des parties
+  → A voir comment gérer avec les différents cadres en haut de la feuille
 */

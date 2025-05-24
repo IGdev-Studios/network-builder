@@ -184,7 +184,7 @@ Tours */
     display: none;
     position: absolute;
     bottom: -6px;
-    left: 35%;
+    left: 30%;
 }
 .h_main:hover{background-color: #eee;}
 .h_main:hover>.h_btnBar{display: block;}
@@ -202,6 +202,7 @@ Tours */
     border:none;
     border-top:solid 1px grey;
     border-bottom: solid 1px grey ;
+    padding: 0 5px;
 }
 .h_btnBar button:first-of-type{
     border-left:solid 1px grey ;
