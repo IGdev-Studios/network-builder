@@ -2180,8 +2180,6 @@ json_F6866 = {
 Todo list :
 
 MAJ Notes par courses, séparées des notes globales
-MAJ Edition des éléments
-MAJ Dupliquer un élément
 MAJ Import<>Export
 MAJ Horaire type Déplacement
 MAJ Remplacer les popup par un panneau latéral ?

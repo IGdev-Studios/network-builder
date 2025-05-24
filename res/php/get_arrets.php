@@ -10,7 +10,7 @@ if ($conn->connect_error) {
 }
 
 // Requête SQL pour récupérer le contenu de la table (à remplacer par votre propre requête)
-$sql = "SELECT * FROM liste_arrets";
+$sql = "SELECT * FROM `liste_arrets`";
 $result = $conn->query($sql);
 
 // Vérification s'il y a des résultats
@@ -26,7 +26,7 @@ if ($result->num_rows > 0) {
     // Conversion du tableau associatif en format JSON et affichage
     echo json_encode($data);
 } else {
-    echo "0 résultats";
+    echo json_encode("0 résultats");
 }
 
 // Fermeture de la connexion
