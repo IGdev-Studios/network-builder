@@ -328,6 +328,7 @@ input[type="radio"] + label,.popup button,select{
     header,#data{
         display: none;
     }
+    /* #version à imprimer, ou pas ? */
     /* Instalation du texte en bas de page */
     /* #horaires{    
         min-height: 950px;
