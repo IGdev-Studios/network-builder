@@ -2,7 +2,7 @@ const debug = {
   "basics": true,
   "importToLS": false,
   "exportToLS": false,
-  "supprToLS": true,
+  "supprToLS": false,
   "popupSystem": false,
   "buildHoraires": false,
 }
