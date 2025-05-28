@@ -1,7 +1,8 @@
 const debug = {
   "basics": true,
-  "importToLS": true,
-  "exportToLS": true,
+  "importToLS": false,
+  "exportToLS": false,
+  "supprToLS": true,
   "popupSystem": false,
   "buildHoraires": false,
 }
@@ -94,13 +95,13 @@ function showPopup(popupId,action=undefined) {
 
   document.querySelector("#"+popupId).style.display = "block";
 
-  if (action == 'edit') {
+  if (popupId == 'horairePopup' && action == 'edit') {
     document.querySelectorAll('.hNew').forEach((e)=>{e.style.display = "none"})
     document.querySelectorAll('.hEdit').forEach((e)=>{e.style.display = ""})
     // On affiche les éléments de la popup d'édition
     // on préremplit les champs avec les valeurs du JSON
     
-  }else if (action == 'new'||((popupId == 'horairePopup')&&(action == undefined))) {
+  }else if ((popupId == 'horairePopup' && action == 'new')||(popupId == 'horairePopup' && action == undefined)) {
     document.querySelectorAll('.hNew').forEach((e)=>{e.style.display = ""})
     document.querySelectorAll('.hEdit').forEach((e)=>{e.style.display = "none"})
     if (popupId == 'horairePopup') {
@@ -155,6 +156,17 @@ function showPopup(popupId,action=undefined) {
         option.innerHTML = save.nom;
         saveSelect.appendChild(option);
       })
+    }
+    if (action == 'deleteSave'){
+      // On affiche le bouton de suppression de sauvegarde
+      document.querySelectorAll('.saveD').forEach((e)=>{e.style.display = "inline"})
+      document.querySelectorAll('.saveL').forEach((e)=>{e.style.display = "none"})
+      document.querySelector('#loadPopup').querySelector('h2').innerHTML = "Supprimer une sauvegarde"
+    }else{
+      // On cache le bouton de suppression de sauvegarde
+      document.querySelectorAll('.saveD').forEach((e)=>{e.style.display = "none"})
+      document.querySelectorAll('.saveL').forEach((e)=>{e.style.display = "inline"})
+      document.querySelector('#loadPopup').querySelector('h2').innerHTML = "Charger une sauvegarde"
     }
   }
 }
@@ -585,11 +597,7 @@ function executeSavePopup() {
 function executeLoadPopup() {
   let saves = localStorage.getItem('nbt_sauvegardes_planchettes');
   // On vérifie si la catégorie de sauvegarde du LS existe
-  if (saves == undefined || saves == '' || saves == "") {
-    saves = [];
-  } else {
-    saves = JSON.parse(saves);
-  }
+  if(saves==undefined||saves==''){saves=[];}else{saves=JSON.parse(saves);}
   if (document.querySelector('#typeChargement').value == 'newLoad') {
     // On génère une planchette vide
   }else{
@@ -624,6 +632,27 @@ function executeLoadPopup() {
 
     hidePopup('loadPopup')
   }
+}
+function executeDelPopup() {
+  let saves = localStorage.getItem('nbt_sauvegardes_planchettes');
+  // On vérifie si la catégorie de sauvegarde du LS existe
+  if(saves==undefined||saves==''){saves=[];}else{saves=JSON.parse(saves);}
+  let nomSauvegarde = document.querySelector('#typeChargement').value
+  // on cherche la sauvegarde dans le tableau
+  let saveIndex = saves.findIndex((save) => save.nom == nomSauvegarde);
+  debug.supprToLS?console.log(saveIndex):null
+  if (saveIndex == -1) {
+    window.alert("Erreur : la sauvegarde n'existe pas.")
+    return;
+  }
+  // on supprime la sauvegarde
+  saves.splice(saveIndex, 1);
+  debug.supprToLS?console.log("Sauvegarde supprimée",saves):null
+  // on sauvegarde dans le localStorage
+  localStorage.setItem('nbt_sauvegardes_planchettes',JSON.stringify(saves));
+
+  hidePopup('loadPopup')
+  
 }
 /** Re-générer la planchette avec le contenu du JSON de la page.
 * A appeller lorsque le JSON est modifié

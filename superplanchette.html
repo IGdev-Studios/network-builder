@@ -51,7 +51,7 @@
                     <div class="btn" onclick="reloadPlanchette(json_StServan_U1)">Générer Démo (StServan U)</div>
                     <div class="btn impo" onclick="showPopup('savePopup')">Enregistrer une planchette (LS)</div>
                     <div class="btn expo" onclick="showPopup('loadPopup')">Charger une planchette (LS)</div>
-                    <!-- <div class="btn dele" onclick="window.alert('Bouton inutilisé')">Supprimer une sauvegarde (LS)</div> -->
+                    <div class="btn dele" onclick="showPopup('loadPopup','deleteSave')">Supprimer une sauvegarde (LS)</div>
                     <!-- <div class="btn" onclick="clearLocalStorage()">Vider le LocalStorage</div> -->
                     <!-- <div class="text">Utilisez CTRL+P pour enregistrer la planchette au format PDF</div> -->
                     <!-- <div class="btn impo">Importer (JSON)</div> -->
@@ -198,7 +198,7 @@
             <div>
                 <select name="loadType" id="typeChargement">
                     <option value="placeholder" disabled selected>- Choissisez une option -</option>
-                    <option value="newLoad" id="newLoad">Planchette vierge</option>
+                    <option value="newLoad" class="saveL" id="newLoad">Planchette vierge</option>
                     <optgroup label="Sauvegardes Existantes" id="loadGroup">
                         <!-- Les options seront ajoutées dynamiquement -->
                          <option value="noLoad" disabled>Aucune Sauvegarde enregistrée</option>
@@ -206,7 +206,8 @@
                 </select>
             </div>
             <button onclick="hidePopup('loadPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
-            <button onclick="executeLoadPopup()"><img src="./res/svg/check-bold.svg" height="20"> Charger</button>
+            <button class="saveL" onclick="executeLoadPopup()"><img src="./res/svg/check-bold.svg" height="20"> Charger</button>
+            <button class="saveD" onclick="executeDelPopup()"><img src="./res/svg/delete.svg" height="20"> Supprimer</button>
         </div>
     </body>
     </html>
