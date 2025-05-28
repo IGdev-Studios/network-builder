@@ -138,6 +138,7 @@ function showPopup(popupId,action=undefined) {
   }
 
   if (popupId == 'loadPopup') {
+    document.querySelector('#loadTypeDefaut').selected = true
     // On vérifie si la catégorie de sauvegarde du LS existe
     if (localStorage.getItem('nbt_sauvegardes_planchettes') == undefined) {
       localStorage.setItem('nbt_sauvegardes_planchettes','')
@@ -600,6 +601,33 @@ function executeLoadPopup() {
   if(saves==undefined||saves==''){saves=[];}else{saves=JSON.parse(saves);}
   if (document.querySelector('#typeChargement').value == 'newLoad') {
     // On génère une planchette vide
+    jsonSave = {
+      "entreprise": "",
+      "dateVigeur": "",
+      "service": {
+        "idService": "",
+        "periode": "",
+        "typeService": ""
+      },
+      "horaires": [],
+      "recap": []
+    }
+    // on ajuste les infos de service
+    document.querySelector('#ser_id').value = ""
+    document.querySelector('#ser_peri').value = ""
+    document.querySelectorAll(`input[name="typeService"]`).forEach((e)=>{
+      e.checked = false
+    })
+    // on ajuste la date de vigeur
+    document.querySelector('#i2').value = ""
+    // on ajuste l'entreprise
+    document.querySelector('#i1').value = ""
+    debug.exportToLS?console.log("Planchette vide générée",jsonSave):null
+    // On recharge la planchette
+    reloadPlanchette(jsonSave)
+    // On cache la popup
+    hidePopup('loadPopup')
+
   }else{
     let nomSauvegarde = document.querySelector('#typeChargement').value
     console.log("Chargement de la sauvegarde",nomSauvegarde)
