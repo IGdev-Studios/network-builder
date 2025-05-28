@@ -1,31 +1,27 @@
-const debugLevel = 0
-// Niveau de debug
-//  0 = pas de debug
-//  1 = fonctions principales (boutons)
-//  2 = toutes les fonctions
+const debug = {
+  "basics": true,
+  "importToLS": true,
+  "exportToLS": true,
+  "popupSystem": false,
+  "buildHoraires": false,
+}
+// Variables DEBUG, à modifier au besoin
+// Basics = toutes les fonctions de base de la page
+// ImportToLS = sauvegarde des données dans le localStorage
+// ExportToLS = chargement des données depuis le localStorage
+// PopupSystem = gestion des popups
+// BuildHoraires = construction des horaires et de la planchette
 
 /* Au chargenment de la page */
 
 window.onload = function(){
-  debugLevel>=1?console.log("Niveau de debug : ",debugLevel):null
-  debugLevel>=1?console.log("Chargement de la page"):null
+  debug.basics?console.log("Chargement de la page"):null
+  debug.basics?console.log("Debug activé",debug):null
+  // console log des élements de debug
+
   data=document.querySelector("#data")
-  if (localStorage.getItem('display_help_img') == 'true'){
-    document.querySelector("#reel").style = "display: block";
-    document.querySelector("#plre").checked = true;
-  }
-  // Bouton Mise en PDF
-  // document.querySelector('.btn.pdf').onclick = function () {
-  //   options = {
-  //     filename:   document.querySelector('#entreprise').innerHTML
-  //     +"_"+document.querySelector('#idService').innerHTML
-  //     +"_"+document.querySelector('#periodeService').innerHTML
-  //     +"_"+document.querySelector('#dateVigeur').innerHTML.slice(12)
-  //     +".pdf",
-  //   }
-  //   html2pdf(document.querySelector('#render'),options)
-  // }
-/* Bouton PDF A DESACTIVER. IMPRESSION EN MEILLEURE QUALITEE VIA CTRL+P*/
+ 
+/* Bouton PDF DESACTIVÉ. IMPRESSION EN MEILLEURE QUALITEE VIA CTRL+P*/
 
 
   // Bouton import JSON
@@ -71,15 +67,20 @@ window.onload = function(){
       changeHorairePopup(e.value)
     }
   })
-  // document.querySelector('#editPopup').onchange
-  //// Code temporaire note de début
-  
-  // document.querySelector('#h_0')
-  
-  // Fonctions de lancement
-  
-  
+  document.querySelectorAll('#typeSauvegarde').forEach((e)=>{
+    e.onchange = function(){
+      if (e.value == 'newSave'){
+        document.querySelector('#saveNameDiv').style.display = "block"
+      }else{
+        document.querySelector('#saveNameDiv').style.display = "none"
+      }
+    }
+  })
 }
+///////////////////////////////
+////// FIN WINDOW.ONLOAD //////
+///////////////////////////////
+
 //
 // Fonctions de la page
 //
@@ -89,8 +90,10 @@ window.onload = function(){
 * @param {string} popupId - ID de la popup (sans le #)
 */
 function showPopup(popupId,action=undefined) {
-  debugLevel>=1?console.log("Ouvrir popup "+popupId):null
+  debug.popupSystem?console.log("Ouvrir popup "+popupId):null
+
   document.querySelector("#"+popupId).style.display = "block";
+
   if (action == 'edit') {
     document.querySelectorAll('.hNew').forEach((e)=>{e.style.display = "none"})
     document.querySelectorAll('.hEdit').forEach((e)=>{e.style.display = ""})
@@ -114,23 +117,45 @@ function showPopup(popupId,action=undefined) {
   if (popupId == 'savePopup') {
     // On vérifie si la catégorie de sauvegarde du LS existe
     if (localStorage.getItem('nbt_sauvegardes_planchettes') == undefined) {
-      localStorage.setItem('nbt_sauvegardes_planchettes',[])
+      localStorage.setItem('nbt_sauvegardes_planchettes','')
     }
     // On charge les noms de sauvegardes existantes dans le select
     let saveSelect = document.querySelector('#saveGroup');
     saveSelect.innerHTML = "";
-    let saves = JSON.parse(localStorage.getItem('nbt_sauvegardes_planchettes'));
-    debugLevel>=1?console.log("Sauvegardes existantes",saves):null
-    if (saves.length == 0) {
-      saveSelect.innerHTML = `<option value="newSave" disabled>Créez une nouvelle sauvegarde</option>`
+    if (localStorage.getItem('nbt_sauvegardes_planchettes') == '') {
+      saveSelect.innerHTML = `<option value="newSave" disabled>Aucune sauvegarde enregistrée</option>`
+    }else{
+      let saves = JSON.parse(localStorage.getItem('nbt_sauvegardes_planchettes'));
+      debug.importToLS?console.log("Sauvegardes existantes",saves):null      
+      saves.forEach((save)=>{
+        let option = document.createElement('option');
+        option.value = save.nom;
+        option.innerHTML = save.nom;
+        saveSelect.appendChild(option);
+      })
     }
-    saves.forEach((save)=>{
-      let option = document.createElement('option');
-      option.value = save.nom;
-      option.innerHTML = save.nom;
-      saveSelect.appendChild(option);
-    })
+  }
 
+  if (popupId == 'loadPopup') {
+    // On vérifie si la catégorie de sauvegarde du LS existe
+    if (localStorage.getItem('nbt_sauvegardes_planchettes') == undefined) {
+      localStorage.setItem('nbt_sauvegardes_planchettes','')
+    }
+    // On charge les noms de sauvegardes existantes dans le select
+    let saveSelect = document.querySelector('#loadGroup');
+    saveSelect.innerHTML = "";
+    if (localStorage.getItem('nbt_sauvegardes_planchettes') == '') {
+      saveSelect.innerHTML = `<option value="newSave" disabled>Aucune sauvegarde enregistrée</option>`
+    }else{
+      let saves = JSON.parse(localStorage.getItem('nbt_sauvegardes_planchettes'));
+      debug.exportToLS?console.log("Sauvegardes existantes",saves):null
+      saves.forEach((save)=>{
+        let option = document.createElement('option');
+        option.value = save.nom;
+        option.innerHTML = save.nom;
+        saveSelect.appendChild(option);
+      })
+    }
   }
 }
 /**
@@ -138,7 +163,7 @@ function showPopup(popupId,action=undefined) {
 * @param {string} popupId - ID de la popup (sans le #)
 */
 function hidePopup(popupId) {
-  debugLevel>=1?console.log("Fermer popup "+popupId):null
+  debug.popupSystem?console.log("Fermer popup "+popupId):null
   document.querySelector("#"+popupId).style.display = "none";
 }
 /**
@@ -157,7 +182,7 @@ function changeHorairePopup(valeur,mode=undefined,data=undefined) {
   
   switch (valeur) {
     case "voiture":
-      console.log("Voiture")
+      debug.buildHoraires?console.log("Voiture"):null
       document.querySelector('#horaire').innerHTML = `
       Ligne <input name="voitLigne" type="text"><br>
       N° de voiture <input name="voitNum" type="text">`
@@ -167,11 +192,11 @@ function changeHorairePopup(valeur,mode=undefined,data=undefined) {
       }
     break;
     case "course":
-      console.log("Course")
+      debug.buildHoraires?console.log("Course"):null
       reloadStops(data)
     break;
     case "coupure":
-      console.log("Coupure")
+      debug.buildHoraires?console.log("Coupure"):null
       document.querySelector('#horaire').innerHTML = `
       Heure de début <input name="coupDeb" type="time"><br>
       Heure de fin <input name="coupFin" type="time">`
@@ -181,7 +206,7 @@ function changeHorairePopup(valeur,mode=undefined,data=undefined) {
       }
     break;
     case "note":
-      console.log("Note")
+      debug.buildHoraires?console.log("Note"):null
       document.querySelector('#horaire').innerHTML = `
       <textarea name="notes" cols="40" rows="4" placeholder="Entrez vos notes ici..."></textarea>`
       if (mode == 'edit') {
@@ -274,7 +299,7 @@ function reloadStops(data=undefined) {
       let inputTime = document.createElement('input'); inputTime.type = 'time';
         
       // Input nom arrêt
-      debugLevel>=2?console.log("Nom arret",e.nom):null
+      debug.buildHoraires?console.log("Nom arret",e.nom):null
       inputArret.value = e.nom;
       inputArret.placeholder = "Nom de l'arrêt";
       inputArret.addEventListener('change', () => {
@@ -284,7 +309,7 @@ function reloadStops(data=undefined) {
       divInput.appendChild(inputArret);
       
       // Input temps arrêt
-      debugLevel>=2?console.log("Horaire arret",e.horaire):null
+      debug.buildHoraires?console.log("Horaire arret",e.horaire):null
       inputTime.value = e.horaire;
       inputTime.addEventListener('change', () => {
         let index = stopsArray.indexOf(e);
@@ -413,10 +438,9 @@ function reloadRecapList() {
 /**
  *  Dupliquer un horaire
  */
-
 function duplicateHoraire() {
   i = editID
-  debugLevel>=1?console.log("Dupliquer l'horaire n°",i):null
+  debug.buildHoraires?console.log("Dupliquer l'horaire n°",i):null
   // On duplique l'horaire
   let horaireToDuplicate = jsonSave.horaires[i];
   // On ajoute l'horaire dupliqué après l'horaire d'origine
@@ -432,7 +456,7 @@ function duplicateHoraire() {
 */
 function executeHorairePopup(action) {
   i = editID
-  debugLevel>=1?console.log("Exécution de la popup d'horaire, action:",action,"i:",i):null
+  debug.buildHoraires?console.log("Exécution de la popup d'horaire, action:",action,"i:",i):null
 
   let typeAjout = document.querySelector('#typeHoraire').value;
   let addStopList = stopsArray
@@ -513,51 +537,100 @@ function executeSavePopup() {
   let saves = localStorage.getItem('nbt_sauvegardes_planchettes');
 
   // On vérifie si la catégorie de sauvegarde du LS existe
-  if (saves == undefined || saves == null || saves == "") {
+  if (saves == undefined || saves == '' || saves == "") {
     saves = [];
   } else {
     saves = JSON.parse(saves);
   }
-  debugLevel>=1?console.log("Sauvegardes existantes",saves):null
   if (document.querySelector('#typeSauvegarde').value == 'newSave') {
     // On récupère le nom de la sauvegarde
     let nomSauvegarde = document.querySelector('#saveName').value
     if (nomSauvegarde == "") {
       nomSauvegarde = window.prompt("Veuillez entrer un nom de sauvegarde.")      
-      // on sauvegarde la sauvegarde
-      saves.push({
-        "nom": nomSauvegarde,
-        "data": JSON.stringify(jsonSave)
-      })
-      // on sauvegarde dans le localStorage
-      localStorage.setItem('nbt_sauvegardes_planchettes',JSON.stringify(saves));
+
     }
+    // on sauvegarde la sauvegarde
+    saves.push({
+      "nom": nomSauvegarde,
+      "data": JSON.stringify(jsonSave)
+    })
+    
+    // on sauvegarde dans le localStorage
+    debug.importToLS?console.log("Nouvelle sauvegarde",saves[saves.length-1]):null
+    localStorage.setItem('nbt_sauvegardes_planchettes',JSON.stringify(saves));
+    // window.alert(`Sauvegarde ${nomSauvegarde} effectuée avec succès !`)
   }else{
     let nomSauvegarde = document.querySelector('#typeSauvegarde').value
-    debugLevel>=1?console.log("Modification de la sauvegarde",nomSauvegarde):null
+
     // on cherche la sauvegarde dans le tableau
     let saveIndex = saves.findIndex((save) => save.nom == nomSauvegarde);
     if (saveIndex == -1) {
       window.alert("Erreur : la sauvegarde n'existe pas.")
       return;
     }
+
     // on modifie la sauvegarde
     saves[saveIndex].data = JSON.stringify(jsonSave);
-    debugLevel>=1?console.log("Sauvegarde modifiée",saves[saveIndex]):null
+    debug.importToLS?console.log("Sauvegarde modifiée",saves[saveIndex]):null
+
     // on sauvegarde dans le localStorage
     localStorage.setItem('nbt_sauvegardes_planchettes',JSON.stringify(saves));
+    // window.alert(`Sauvegarde ${nomSauvegarde} effectuée avec succès !`)
   }
+  debug.importToLS?console.log("Sauvegardes existantes",saves):null
   // on réinitialise le champ de nom de sauvegarde
   document.querySelector('#saveName').value = ""
-  window.alert(`Sauvegarde ${nomSauvegarde} effectuée avec succès !`)
   hidePopup('savePopup')
+}
+function executeLoadPopup() {
+  let saves = localStorage.getItem('nbt_sauvegardes_planchettes');
+  // On vérifie si la catégorie de sauvegarde du LS existe
+  if (saves == undefined || saves == '' || saves == "") {
+    saves = [];
+  } else {
+    saves = JSON.parse(saves);
+  }
+  if (document.querySelector('#typeChargement').value == 'newLoad') {
+    // On génère une planchette vide
+  }else{
+    let nomSauvegarde = document.querySelector('#typeChargement').value
+    console.log("Chargement de la sauvegarde",nomSauvegarde)
+    // on cherche la sauvegarde dans le tableau
+    let saveIndex = saves.findIndex((save) => save.nom == nomSauvegarde);
+    debug.exportToLS?console.log(saveIndex):null
+    if (saveIndex == -1) {
+      window.alert("Erreur : la sauvegarde n'existe pas.")
+      return;
+    }
+    // on charge la sauvegarde
+    jsonSave = JSON.parse(saves[saveIndex].data);
+    debug.exportToLS?console.log("Sauvegarde chargée",jsonSave):null
+    // on ajuste le récap
+    recapArray = jsonSave.recap
+    // on ajuste les infos de service
+    document.querySelector('#ser_id').value = jsonSave.service.idService
+    document.querySelector('#ser_peri').value = jsonSave.service.periode
+    document.querySelector(`#ser_${jsonSave.service.typeService}`).checked = true
+    // on ajuste la date de vigeur
+    date = jsonSave.dateVigeur.split('/')
+    document.querySelector('#i2').value = `${date[2]}-${date[1]}-${date[0]}` // YYYY-MM-DD
+    // on ajuste l'entreprise
+    document.querySelector('#i1').value = jsonSave.entreprise
+    // on ajuste la couleur de fond (PAS UTILISÉE)
+    // document.querySelector('#i0').value = jsonSave.couleurFond
+    // document.querySelector("#render").style = `background-color: ${jsonSave.couleurFond}`
+    // on recharge la planchette
+    reloadPlanchette(jsonSave)
+
+    hidePopup('loadPopup')
+  }
 }
 /** Re-générer la planchette avec le contenu du JSON de la page.
 * A appeller lorsque le JSON est modifié
 * @param {*}jsonData : Objet JSON des données de la planchette
 */
 function reloadPlanchette(jsonData = jsonSave) {
-  debugLevel>=1?console.log("Regénération de la planchette avec les données suivantes",jsonData):null
+  debug.buildHoraires?console.log("Regénération de la planchette avec les données suivantes",jsonData):null
   jsonSave = jsonData
   reloadHeadline(jsonData)
   reloadResume(jsonData)
@@ -646,7 +719,7 @@ function reloadHoraires(jsonData = jsonSave) {
     // toAdd = "" // OLD
     switch (horaire.type) {
       case 'voiture':
-        debugLevel>=2?console.groupCollapsed("Voiture"):null
+        debug.buildHoraires?console.groupCollapsed("Voiture"):null
         addType.innerHTML = "Voiture"
         poidsItem = 1
         addDiv.className = "h_main h_num_voiture"
@@ -656,7 +729,7 @@ function reloadHoraires(jsonData = jsonSave) {
       break;
         
       case 'coupure':
-        debugLevel>=2?console.groupCollapsed("Coupure"):null
+        debug.buildHoraires?console.groupCollapsed("Coupure"):null
         poidsItem = 1
         addDiv.className = "h_main h_coupure"
         addType.innerHTML = "Coupure"
@@ -666,14 +739,14 @@ function reloadHoraires(jsonData = jsonSave) {
       break;
       
       case 'note':
-        debugLevel>=2?console.groupCollapsed("Note"):null
+        debug.buildHoraires?console.groupCollapsed("Note"):null
         poidsItem = 1
         addDiv.className = "h_main h_note"
         addText = document.createTextNode(horaire.note)
         addDiv.appendChild(addText)
       break;
       case 'course':
-      debugLevel>=2?console.group("Course"):null
+      debug.buildHoraires?console.group("Course"):null
       addDiv.className = "h_main h_course"
       // Gestion du poids
       poidsItem = horaire.arrets.length
@@ -698,7 +771,7 @@ function reloadHoraires(jsonData = jsonSave) {
       }else{
         addGir.innerHTML = "gir"+horaire.gir
       }
-      debugLevel>=2?console.log(addGir):null
+      debug.buildHoraires?console.log(addGir):null
       addDiv.appendChild(addGir)
       // boucle arrêts
       horaire.arrets.forEach((arret)=>{
@@ -732,7 +805,7 @@ function reloadHoraires(jsonData = jsonSave) {
     }
     // Après génération, ajouter la barre de boutons
     addDiv.appendChild(addBtnBar)
-    debugLevel>=2?console.log(addDiv):null
+    debug.buildHoraires?console.log(addDiv):null
     
     // Placement des horaires
     switch (numColone){
@@ -769,7 +842,7 @@ function reloadHoraires(jsonData = jsonSave) {
       window.alert("Erreur : Cas non prévu.")
       break;
     }
-    debugLevel>=2?console.groupEnd():null
+    debug.buildHoraires?console.groupEnd():null
   })
 }
 
@@ -777,51 +850,7 @@ function reloadHoraires(jsonData = jsonSave) {
 // A court terme, on sauvegarde une planchette dans le localStorage du navigateur
 // A moyen terme, on devrait pouvoir sauvegarder plusieurs planchettes dans le localStorage du navigateur
 // A long terme, on devrait pouvoir sauvegarder dans un fichier JSON
-
-function saveToLocalStorage(jsonData) {
-  debugLevel>=1?console.log("Sauvegarde dans le localStorage",jsonData):null
-  // On demande le nom de la sauvegarde
-  window.alert("La planchette sera sauvegardée dans le localStorage du navigateur. Vous pouvez la retrouver dans l'onglet 'Application' de votre navigateur, dans la section 'Stockage local'.");
-  window.alert("Pour charger une planchette sauvegardée, utilisez le bouton 'Charger depuis le localStorage'.");
-  window.alert("Pour effacer le localStorage, utilisez le bouton 'Effacer le localStorage'.");
-  // On sauvegarde le JSON dans le localStorage
-  localStorage.setItem("donneesPlanchette",JSON.stringify(jsonData));
-  // On affiche un message de confirmation
-  document.querySelector("#saveMessage").innerHTML = "Planchette sauvegardée !"
-  setTimeout(() => {
-    document.querySelector("#saveMessage").innerHTML = ""
-  }, 2000);  
-}
-function loadFromLocalStorage() {
-  debugLevel>=1?console.log("Chargement depuis le localStorage"):null
-  // On charge le JSON depuis le localStorage
-  if (localStorage.getItem("donneesPlanchette") != null) {
-    jsonData = JSON.parse(localStorage.getItem("donneesPlanchette"));
-    reloadPlanchette(jsonData);
-    document.querySelector("#loadMessage").innerHTML = "Planchette chargée !"
-    setTimeout(() => {
-      document.querySelector("#loadMessage").innerHTML = ""
-    }, 2000);
-  } else {
-    window.alert("Aucune planchette sauvegardée dans le localStorage")
-  }
-}
-function clearLocalStorage() {
-  debugLevel>=1?console.log("Effacement du localStorage"):null
-  // On demande confirmation
-  if (!window.confirm("Êtes-vous sûr de vouloir effacer le localStorage ? Toutes les données seront perdues.")) {
-    debugLevel>=1?console.log("Effacement annulé"):null
-    return;
-  }
-  debugLevel>=1?console.log("Effacement du localStorage"):null
-  // On efface le localStorage
-  localStorage.removeItem("donneesPlanchette");
-  // On affiche un message de confirmation
-  document.querySelector("#clearMessage").innerHTML = "Planchette effacée !"
-  setTimeout(() => {
-    document.querySelector("#clearMessage").innerHTML = ""
-  }, 2000);
-}
+// A très long terme, on devrait pouvoir sauvegarder dans une base de données distante
 
 //
 // Variables page

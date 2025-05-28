@@ -49,8 +49,9 @@
                     <div class="btn" onclick="showPopup('horairePopup','new')">Ajouter un élément</div>
                     <div class="btn" onclick="reloadPlanchette(jsonDemo)">Générer Démo (M réso C11/C12)</div>
                     <div class="btn" onclick="reloadPlanchette(json_StServan_U1)">Générer Démo (StServan U)</div>
-                    <div class="btn impo" onclick="saveToLocalStorage(jsonSave)">Enregistrer dans le LocalStorage</div>
-                    <div class="btn expo" onclick="loadFromLocalStorage()">Charger depuis le LocalStorage</div>
+                    <div class="btn impo" onclick="showPopup('savePopup')">Enregistrer une planchette (LS)</div>
+                    <div class="btn expo" onclick="showPopup('loadPopup')">Charger une planchette (LS)</div>
+                    <!-- <div class="btn dele" onclick="window.alert('Bouton inutilisé')">Supprimer une sauvegarde (LS)</div> -->
                     <!-- <div class="btn" onclick="clearLocalStorage()">Vider le LocalStorage</div> -->
                     <!-- <div class="text">Utilisez CTRL+P pour enregistrer la planchette au format PDF</div> -->
                     <!-- <div class="btn impo">Importer (JSON)</div> -->
@@ -93,14 +94,14 @@
                     <div id="h_col1"></div>
                     <div id="h_col2">
                         <div class="h_main h_note" id="h_0">
-                            Cliquez sur "Regénérer Fiche" pour faire apparaitre une démonstration
+                            Cliquez sur "Générer Démo" pour faire apparaitre une démonstration
                         </div>
                     </div>
                     <div id="h_col3"></div>
                 </div>
                 <!-- VERSION PLANCHETTE -->
                 <div id="pied">
-                    <div>Planchette générée par Network Builder Toolkit sur nbt.thecitadis.fr<span id="version"> - Version 1.0.2</span></div>
+                    <div>Planchette générée par Network Builder Toolkit sur nbt.thecitadis.fr<span id="version"> - Version 1.0.3</span></div>
                 </div>
             </div>
                 <!-- <div id="reel" style="display: none">
@@ -129,12 +130,15 @@
         <div id="servicePopup" class="popup" style="display: none;">
             <h2>Définitions planchette</h2>
             <input type="text" name="idService" id="ser_id" placeholder="ex. 21 -010"><label for="ser_id"> Numéro de planchette</label><br>
-            <input type="text" name="periodeService" id="ser_peri" placeholder="ex. HI2223 - LVH"><label for="ser_peri"> Euh...</label><br>
+            <input type="text" name="periodeService" id="ser_peri" placeholder="ex. HI2223 - LVH"><label for="ser_peri"> Periode de fonctionnement</label><br>
+            <div>Type Service</div>
             <div class="radioParent">
                 <input type="radio" name="typeService" value="coma" id="ser_coma"><label for="ser_coma">Service matin</label>
                 <input type="radio" name="typeService" value="copm" id="ser_copm"><label for="ser_copm">Service après-midi</label>
                 <input type="radio" name="typeService" value="coso" id="ser_coso"><label for="ser_coso">Service soirée</label>
-                <input type="radio" name="typeService" value="dfoi" id="ser_dfoi"><label for="ser_dfoi">Service coupé</label><br>
+                <input type="radio" name="typeService" value="dfoi" id="ser_dfoi"><label for="ser_dfoi">Service coupé</label>
+                <input type="radio" name="typeService" value="hr"   id="ser_hr"><label for="ser_hr">Service Hors Roulement</label>
+                <br>
             </div>
             <button onclick="hidePopup('servicePopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
             <button onclick="executeServicePopup()"><img src="./res/svg/check-bold.svg" height="20"> Valider</button>          
@@ -188,6 +192,21 @@
             <button onclick="hidePopup('savePopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
             <button onclick="executeSavePopup()"><img src="./res/svg/check-bold.svg" height="20"> Enregistrer</button>
 
+        </div>
+        <div id="loadPopup" class="popup" style="display: none;">
+            <h2>Charger la planchette</h2>
+            <div>
+                <select name="loadType" id="typeChargement">
+                    <option value="placeholder" disabled selected>- Choissisez une option -</option>
+                    <option value="newLoad" id="newLoad">Planchette vierge</option>
+                    <optgroup label="Sauvegardes Existantes" id="loadGroup">
+                        <!-- Les options seront ajoutées dynamiquement -->
+                         <option value="noLoad" disabled>Aucune Sauvegarde enregistrée</option>
+                    </optgroup>
+                </select>
+            </div>
+            <button onclick="hidePopup('loadPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
+            <button onclick="executeLoadPopup()"><img src="./res/svg/check-bold.svg" height="20"> Charger</button>
         </div>
     </body>
     </html>

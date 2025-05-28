@@ -56,12 +56,25 @@ input{
     color: aliceblue;
 }
 .btn:hover{background-color: #444;}
-.btn.pdf{background-color: red;}
-.btn.pdf:hover{background-color: darkred;}
+.btn.dele{background-color: red;}
+.btn.dele:hover{background-color: darkred;}
 .btn.impo{background-color: #0000f0;}
 .btn.impo:hover{background-color: #000080;}
 .btn.expo{background-color: violet;}
 .btn.expo:hover{background-color: darkorchid;}
+
+/********/
+/* Text */
+/********/
+.text{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    padding: 10px;
+}
+
 /********/
 /* TEMP */
 /********/
@@ -296,6 +309,8 @@ input[type="radio"] + label,.popup button,select{
 .radioParent input:checked + label,.radioParent input + label:hover,.popup button:hover  {
     background-color: #bbb;
 }
+input:checked+label::before{content: "→ " ;}
+input:checked+label::after{content: " ←" ;}
 /* Spec Popup Recap*/
 #newRecap{
     padding: 5px 10px;
