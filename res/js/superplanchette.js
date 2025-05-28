@@ -115,7 +115,7 @@ function showPopup(popupId,action=undefined) {
     }
   }
 
-  if (popupId == 'savePopup') {
+  if (popupId == 'saveLsPopup') {
     // On vérifie si la catégorie de sauvegarde du LS existe
     if (localStorage.getItem('nbt_sauvegardes_planchettes') == undefined) {
       localStorage.setItem('nbt_sauvegardes_planchettes','')
@@ -137,7 +137,7 @@ function showPopup(popupId,action=undefined) {
     }
   }
 
-  if (popupId == 'loadPopup') {
+  if (popupId == 'loadLsPopup') {
     document.querySelector('#loadTypeDefaut').selected = true
     // On vérifie si la catégorie de sauvegarde du LS existe
     if (localStorage.getItem('nbt_sauvegardes_planchettes') == undefined) {
@@ -546,7 +546,7 @@ function executeRecapPopup() {
   reloadResume()
   hidePopup('recapPopup')    
 }
-function executeSavePopup() {
+function executeSaveLsPopup() {
   let saves = localStorage.getItem('nbt_sauvegardes_planchettes');
 
   // On vérifie si la catégorie de sauvegarde du LS existe
@@ -593,9 +593,9 @@ function executeSavePopup() {
   debug.importToLS?console.log("Sauvegardes existantes",saves):null
   // on réinitialise le champ de nom de sauvegarde
   document.querySelector('#saveName').value = ""
-  hidePopup('savePopup')
+  hidePopup('saveLsPopup')
 }
-function executeLoadPopup() {
+function executeLoadLsPopup() {
   let saves = localStorage.getItem('nbt_sauvegardes_planchettes');
   // On vérifie si la catégorie de sauvegarde du LS existe
   if(saves==undefined||saves==''){saves=[];}else{saves=JSON.parse(saves);}
@@ -626,7 +626,7 @@ function executeLoadPopup() {
     // On recharge la planchette
     reloadPlanchette(jsonSave)
     // On cache la popup
-    hidePopup('loadPopup')
+    hidePopup('loadLsPopup')
 
   }else{
     let nomSauvegarde = document.querySelector('#typeChargement').value
@@ -658,10 +658,10 @@ function executeLoadPopup() {
     // on recharge la planchette
     reloadPlanchette(jsonSave)
 
-    hidePopup('loadPopup')
+    hidePopup('loadLsPopup')
   }
 }
-function executeDelPopup() {
+function executeDelLsPopup() {
   let saves = localStorage.getItem('nbt_sauvegardes_planchettes');
   // On vérifie si la catégorie de sauvegarde du LS existe
   if(saves==undefined||saves==''){saves=[];}else{saves=JSON.parse(saves);}
@@ -679,8 +679,63 @@ function executeDelPopup() {
   // on sauvegarde dans le localStorage
   localStorage.setItem('nbt_sauvegardes_planchettes',JSON.stringify(saves));
 
-  hidePopup('loadPopup')
+  hidePopup('loadLsPopup')
   
+}
+function executeExportPopup() {
+  // On génère un fichier JSON avec les données de la planchette
+  let jsonData = JSON.stringify(jsonSave, null, 2);
+  // On crée un blob avec les données
+  let blob = new Blob([jsonData], { type: 'application/json' });
+  // On crée un lien de téléchargement
+  let link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `planchette_${jsonSave.service.idService}_${jsonSave.dateVigeur}.json`;
+  // On ajoute le lien au DOM
+  document.body.appendChild(link);
+  // On clique sur le lien pour télécharger le fichier
+  link.click();
+  // On supprime le lien du DOM
+  document.body.removeChild(link);
+  // On cache la popup
+  hidePopup('exportPopup')
+}
+function executeImportPopup() {
+  // On récupère le fichier JSON
+  let fileInput = document.querySelector('#importFile');
+  let file = fileInput.files[0];
+  if (!file) {
+    window.alert("Veuillez sélectionner un fichier JSON à importer.");
+    return;
+  }
+  // On lit le fichier JSON
+  let reader = new FileReader();
+  reader.onload = function(event) {
+    try {
+      // On parse le JSON
+      let jsonData = JSON.parse(event.target.result);
+      // On recharge la planchette avec les données du JSON
+      reloadPlanchette(jsonData);
+      // on ajuste le récap
+      recapArray = jsonSave.recap
+      // on ajuste les infos de service
+      document.querySelector('#ser_id').value = jsonSave.service.idService
+      document.querySelector('#ser_peri').value = jsonSave.service.periode
+      document.querySelector(`#ser_${jsonSave.service.typeService}`).checked = true
+      // on ajuste la date de vigeur
+      date = jsonSave.dateVigeur.split('/')
+      document.querySelector('#i2').value = `${date[2]}-${date[1]}-${date[0]}` // YYYY-MM-DD
+      // on ajuste l'entreprise
+      document.querySelector('#i1').value = jsonSave.entreprise
+      // On cache la popup
+      hidePopup('importPopup');
+    } catch (error) {
+      console.error("Erreur lors de l'importation du fichier JSON :", error);
+      window.alert("Erreur lors de l'importation du fichier JSON. Veuillez vérifier le format du fichier.");
+    }
+  };
+  reader.readAsText(file);
+
 }
 /** Re-générer la planchette avec le contenu du JSON de la page.
 * A appeller lorsque le JSON est modifié

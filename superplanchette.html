@@ -49,12 +49,12 @@
                     <div class="btn" onclick="showPopup('horairePopup','new')">Ajouter un élément</div>
                     <div class="btn" onclick="reloadPlanchette(jsonDemo)">Générer Démo (M réso C11/C12)</div>
                     <div class="btn" onclick="reloadPlanchette(json_StServan_U1)">Générer Démo (StServan U)</div>
-                    <div class="btn impo" onclick="showPopup('savePopup')">Enregistrer une planchette (LS)</div>
-                    <div class="btn expo" onclick="showPopup('loadPopup')">Charger une planchette (LS)</div>
+                    <div class="btn expo" onclick="showPopup('savePopup')">Enregistrer une planchette (LS)</div>
+                    <div class="btn impo" onclick="showPopup('loadPopup')">Charger une planchette (LS)</div>
                     <div class="btn dele" onclick="showPopup('loadPopup','deleteSave')">Supprimer une sauvegarde (LS)</div>
                     <!-- <div class="btn" onclick="clearLocalStorage()">Vider le LocalStorage</div> -->
-                    <!-- <div class="btn impo">Importer (JSON)</div> -->
-                    <!-- <div class="btn expo">Exporter (JSON)</div> -->
+                    <div class="btn expo" onclick="showPopup('exportPopup')">Exporter (JSON)</div>
+                    <div class="btn impo" onclick="showPopup('importPopup')">Importer (JSON)</div>
                 </div>
                 <div class="info_box">
                     <p>Utilisez CTRL+P pour enregistrer la planchette au format PDF.</p>
@@ -106,7 +106,7 @@
                 <div id="pied">
                     <div>
                         Planchette générée par Network Builder Toolkit sur nbt.thecitadis.fr
-                        <span id="version"> - Version 1.0.4</span>
+                        <span id="version"> - Version 1.1.0</span>
                     </div>
                 </div>
             </div>
@@ -181,7 +181,7 @@
             <button onclick="hidePopup('recapPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
             <button onclick="executeRecapPopup()"><img src="./res/svg/check-bold.svg" height="20"> Valider</button>
         </div>
-        <div id="savePopup" class="popup" style="display: none;">
+        <div id="saveLsPopup" class="popup" style="display: none;">
             <h2>Enregistrer la planchette</h2>
             <div>
                 <select name="saveType" id="typeSauvegarde">
@@ -196,10 +196,10 @@
                 Nom : <input type="text" id="saveName" placeholder="Nom de la sauvegarde">
             </div>
             <button onclick="hidePopup('savePopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
-            <button onclick="executeSavePopup()"><img src="./res/svg/check-bold.svg" height="20"> Enregistrer</button>
+            <button onclick="executeSaveLsPopup()"><img src="./res/svg/check-bold.svg" height="20"> Enregistrer</button>
 
         </div>
-        <div id="loadPopup" class="popup" style="display: none;">
+        <div id="loadLsPopup" class="popup" style="display: none;">
             <h2>Charger la planchette</h2>
             <div>
                 <select name="loadType" id="typeChargement">
@@ -212,8 +212,22 @@
                 </select>
             </div>
             <button onclick="hidePopup('loadPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
-            <button class="saveL" onclick="executeLoadPopup()"><img src="./res/svg/check-bold.svg" height="20"> Charger</button>
-            <button class="saveD" onclick="executeDelPopup()"><img src="./res/svg/delete.svg" height="20"> Supprimer</button>
+            <button class="saveL" onclick="executeLoadLsPopup()"><img src="./res/svg/check-bold.svg" height="20"> Charger</button>
+            <button class="saveD" onclick="executeDelLsPopup()"><img src="./res/svg/delete.svg" height="20"> Supprimer</button>
+        </div>
+        <div id="exportPopup" class="popup" style="display: none;">
+            <h2>Exporter la planchette</h2>
+            <p>La planchette sera exportée au format JSON.</p>
+            <button onclick="hidePopup('exportPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
+            <button onclick="executeExportPopup()"><img src="./res/svg/export.svg" height="20"> Exporter</button>
+        </div>
+        <div id="importPopup" class="popup" style="display: none;">
+            <h2>Importer une planchette</h2>
+            <p>La planchette sera importée depuis un fichier JSON.</p>
+            <input type="file" id="importFile" accept=".json">
+            <button onclick="hidePopup('importPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
+            <button onclick="executeImportPopup()"><img src="./res/svg/import.svg" height="20"> Importer</button>
+
         </div>
     </body>
     </html>
