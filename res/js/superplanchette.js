@@ -110,6 +110,28 @@ function showPopup(popupId,action=undefined) {
       document.querySelector('#typeHoraire>option[value=placeholder]').setAttribute('selected','')
     }
   }
+
+  if (popupId == 'savePopup') {
+    // On vérifie si la catégorie de sauvegarde du LS existe
+    if (localStorage.getItem('nbt_sauvegardes_planchettes') == undefined) {
+      localStorage.setItem('nbt_sauvegardes_planchettes',[])
+    }
+    // On charge les noms de sauvegardes existantes dans le select
+    let saveSelect = document.querySelector('#saveGroup');
+    saveSelect.innerHTML = "";
+    let saves = JSON.parse(localStorage.getItem('nbt_sauvegardes_planchettes'));
+    debugLevel>=1?console.log("Sauvegardes existantes",saves):null
+    if (saves.length == 0) {
+      saveSelect.innerHTML = `<option value="newSave" disabled>Créez une nouvelle sauvegarde</option>`
+    }
+    saves.forEach((save)=>{
+      let option = document.createElement('option');
+      option.value = save.nom;
+      option.innerHTML = save.nom;
+      saveSelect.appendChild(option);
+    })
+
+  }
 }
 /**
 * Fermer la Popup
@@ -486,6 +508,49 @@ function executeRecapPopup() {
   jsonSave.recap = recapArray;
   reloadResume()
   hidePopup('recapPopup')    
+}
+function executeSavePopup() {
+  let saves = localStorage.getItem('nbt_sauvegardes_planchettes');
+
+  // On vérifie si la catégorie de sauvegarde du LS existe
+  if (saves == undefined || saves == null || saves == "") {
+    saves = [];
+  } else {
+    saves = JSON.parse(saves);
+  }
+  debugLevel>=1?console.log("Sauvegardes existantes",saves):null
+  if (document.querySelector('#typeSauvegarde').value == 'newSave') {
+    // On récupère le nom de la sauvegarde
+    let nomSauvegarde = document.querySelector('#saveName').value
+    if (nomSauvegarde == "") {
+      nomSauvegarde = window.prompt("Veuillez entrer un nom de sauvegarde.")      
+      // on sauvegarde la sauvegarde
+      saves.push({
+        "nom": nomSauvegarde,
+        "data": JSON.stringify(jsonSave)
+      })
+      // on sauvegarde dans le localStorage
+      localStorage.setItem('nbt_sauvegardes_planchettes',JSON.stringify(saves));
+    }
+  }else{
+    let nomSauvegarde = document.querySelector('#typeSauvegarde').value
+    debugLevel>=1?console.log("Modification de la sauvegarde",nomSauvegarde):null
+    // on cherche la sauvegarde dans le tableau
+    let saveIndex = saves.findIndex((save) => save.nom == nomSauvegarde);
+    if (saveIndex == -1) {
+      window.alert("Erreur : la sauvegarde n'existe pas.")
+      return;
+    }
+    // on modifie la sauvegarde
+    saves[saveIndex].data = JSON.stringify(jsonSave);
+    debugLevel>=1?console.log("Sauvegarde modifiée",saves[saveIndex]):null
+    // on sauvegarde dans le localStorage
+    localStorage.setItem('nbt_sauvegardes_planchettes',JSON.stringify(saves));
+  }
+  // on réinitialise le champ de nom de sauvegarde
+  document.querySelector('#saveName').value = ""
+  window.alert(`Sauvegarde ${nomSauvegarde} effectuée avec succès !`)
+  hidePopup('savePopup')
 }
 /** Re-générer la planchette avec le contenu du JSON de la page.
 * A appeller lorsque le JSON est modifié

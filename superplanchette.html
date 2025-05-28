@@ -173,11 +173,17 @@
         </div>
         <div id="savePopup" class="popup" style="display: none;">
             <h2>Enregistrer la planchette</h2>
-            <div><label><input type="radio" name="saveName" value="newSave" checked/>Nouvelle Sauvegarde</label></div>
-            <div><label><input type="radio" name="saveName" value="existSave"/>Sauvegarde existante</label></div>
-            <div id="saveType">
-                <label for="saveName">Nom de la sauvegarde</label>
-                <input type="text" id="saveName" placeholder="ex. Planchette 21 - 010">
+            <div>
+                <select name="saveType" id="typeSauvegarde">
+                    <option value="newSave" id="newSave">Nouvelle Sauvegarde</option>
+                    <optgroup label="Sauvegardes Existantes" id="saveGroup">
+                        <!-- Les options seront ajoutées dynamiquement -->
+                         <option value="noSave" disabled>Aucune Sauvegarde enregistrée</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div id="saveNameDiv">
+                Nom : <input type="text" id="saveName" placeholder="Nom de la sauvegarde">
             </div>
             <button onclick="hidePopup('savePopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
             <button onclick="executeSavePopup()"><img src="./res/svg/check-bold.svg" height="20"> Enregistrer</button>
