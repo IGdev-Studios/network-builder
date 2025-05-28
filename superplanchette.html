@@ -40,22 +40,19 @@
                 <div class="config_box">
                     <span class="title">Réglages feuille</span><br>
                     <span>Couleur arrière plan </span>
-                    <input type="radio">
                     <input type="color" value="#FFFFFF" id="i0"><br>
-                    <span>Afficher image repère </span><label class="form-switch"><input type="checkbox" id="plre" disabled><i></i></label><br>
                     <span>Entreprise </span><input type="text" name="" id="i1"><br>
                     <span>Date Vigeur </span><input type="date" name="" id="i2"><br>
                 </div>
                 <div class="btn_box">
                     <span class="title">Boutons</span>
                     <div class="btn" onclick="showPopup('horairePopup','new')">Ajouter un élément</div>
-                    <div class="btn" onclick="reloadPlanchette()">Regénérer fiche</div>
-                    <div class="btn" onclick="reloadPlanchette(jsonDemo)">Générer Démo ()</div>
+                    <div class="btn" onclick="reloadPlanchette(jsonDemo)">Générer Démo (M réso C11/C12)</div>
                     <div class="btn" onclick="reloadPlanchette(json_StServan_U1)">Générer Démo (StServan U)</div>
-                    <!-- <div class="btn" onclick="saveToLocalStorage(jsonData)">Enregistrer dans le LocalStorage</div> -->
-                    <!-- <div class="btn" onclick="loadFromLocalStorage()">Charger depuis le LocalStorage</div> -->
+                    <div class="btn impo" onclick="saveToLocalStorage(jsonSave)">Enregistrer dans le LocalStorage</div>
+                    <div class="btn expo" onclick="loadFromLocalStorage()">Charger depuis le LocalStorage</div>
                     <!-- <div class="btn" onclick="clearLocalStorage()">Vider le LocalStorage</div> -->
-                    <div class="btn pdf" id="importJSON">Enregistrer en PDF</div>
+                    <!-- <div class="text">Utilisez CTRL+P pour enregistrer la planchette au format PDF</div> -->
                     <!-- <div class="btn impo">Importer (JSON)</div> -->
                     <!-- <div class="btn expo">Exporter (JSON)</div> -->
                 </div>
@@ -101,8 +98,9 @@
                     </div>
                     <div id="h_col3"></div>
                 </div>
+                <!-- VERSION PLANCHETTE -->
                 <div id="pied">
-                    <div>Planchette générée par Network Builder Toolkit sur nbt.thecitadis.fr<span id="version"> - Version 1.0.1</span></div>
+                    <div>Planchette générée par Network Builder Toolkit sur nbt.thecitadis.fr<span id="version"> - Version 1.0.2</span></div>
                 </div>
             </div>
                 <!-- <div id="reel" style="display: none">
@@ -172,6 +170,18 @@
             </div>
             <button onclick="hidePopup('recapPopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
             <button onclick="executeRecapPopup()"><img src="./res/svg/check-bold.svg" height="20"> Valider</button>
+        </div>
+        <div id="savePopup" class="popup" style="display: none;">
+            <h2>Enregistrer la planchette</h2>
+            <div><label><input type="radio" name="saveName" value="newSave" checked/>Nouvelle Sauvegarde</label></div>
+            <div><label><input type="radio" name="saveName" value="existSave"/>Sauvegarde existante</label></div>
+            <div id="saveType">
+                <label for="saveName">Nom de la sauvegarde</label>
+                <input type="text" id="saveName" placeholder="ex. Planchette 21 - 010">
+            </div>
+            <button onclick="hidePopup('savePopup')"><img src="./res/svg/close-thick.svg" height="20"> Fermer</button>
+            <button onclick="executeSavePopup()"><img src="./res/svg/check-bold.svg" height="20"> Enregistrer</button>
+
         </div>
     </body>
     </html>

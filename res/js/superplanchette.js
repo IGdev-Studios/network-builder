@@ -1,4 +1,4 @@
-const debugLevel = 1
+const debugLevel = 0
 // Niveau de debug
 //  0 = pas de debug
 //  1 = fonctions principales (boutons)
@@ -15,16 +15,19 @@ window.onload = function(){
     document.querySelector("#plre").checked = true;
   }
   // Bouton Mise en PDF
-  document.querySelector('.btn.pdf').onclick = function () {
-    options = {
-      filename:   document.querySelector('#entreprise').innerHTML
-      +"_"+document.querySelector('#idService').innerHTML
-      +"_"+document.querySelector('#periodeService').innerHTML
-      +"_"+document.querySelector('#dateVigeur').innerHTML.slice(12)
-      +".pdf",
-    }
-    html2pdf(document.querySelector('#render'),options)
-  }
+  // document.querySelector('.btn.pdf').onclick = function () {
+  //   options = {
+  //     filename:   document.querySelector('#entreprise').innerHTML
+  //     +"_"+document.querySelector('#idService').innerHTML
+  //     +"_"+document.querySelector('#periodeService').innerHTML
+  //     +"_"+document.querySelector('#dateVigeur').innerHTML.slice(12)
+  //     +".pdf",
+  //   }
+  //   html2pdf(document.querySelector('#render'),options)
+  // }
+/* Bouton PDF A DESACTIVER. IMPRESSION EN MEILLEURE QUALITEE VIA CTRL+P*/
+
+
   // Bouton import JSON
   
   // document.querySelector('#importJSON').onclick = function(){
@@ -52,16 +55,6 @@ window.onload = function(){
     date = `${i2.value}`;j=date.slice(8,10);m=date.slice(5,7);a=date.slice(0,4)
     jsonSave.dateVigeur = `${j}/${m}/${a}`;
     reloadHeadline()
-  }
-  // Planchette repère
-  document.querySelector("#plre").onchange = function(){
-    if (document.querySelector("#plre").checked == true) {
-      document.querySelector("#reel").style = "display: block";
-      localStorage.setItem("display_help_img", true);
-    }else{
-      document.querySelector("#reel").style = "display: none"
-      localStorage.setItem("display_help_img", false);
-    }
   }
   // Popup Edit infos planchette
   document.querySelector('#service').onclick = function(){    
@@ -243,8 +236,8 @@ function reloadStops(data=undefined) {
   if (data != undefined) {
     // console.log("Data arrets",data.arrets)
     stopsArray = data.arrets
-    girCode = data.gir
-    courseCode = data.courseId
+    data.gir!= undefined?girCode = data.gir:null;
+    data.courseId!= undefined?courseCode = data.courseId:null;
   }
   if (stopsArray.length == 0) {
     stopsArray.push({nom:"",horaire:"--:--"});
@@ -2178,12 +2171,17 @@ json_F6866 = {
 
 /*
 Todo list :
+ADD Import JSON
+ADD Export JSON
+ADD Import GTFS - priorité basse
+ADD Export GTFS - priorité basse
 
 MAJ Notes par courses, séparées des notes globales
-MAJ Import<>Export
-MAJ Horaire type Déplacement
+MAJ Type Horaire : Déplacement
 MAJ Remplacer les popup par un panneau latéral ?
   → un panneau qui s'affiche à la place des boutons si un élement
   est selectionné et qui sert à la modification des parties
   → A voir comment gérer avec les différents cadres en haut de la feuille
+
+SUP enlever le bouton PDF, à remplacer par une indication CTRL+P
 */
