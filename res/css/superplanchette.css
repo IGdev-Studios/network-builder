@@ -342,7 +342,7 @@ input:checked+label::after{content: " ←" ;}
     #render{
         border: white;
     }
-    header,#data{
+    header,#data,#pied{
         display: none;
     }
     /* #version à imprimer, ou pas ? */

@@ -1,5 +1,5 @@
 const debug = {
-  "basics": true,
+  "basics": false,
   "importToLS": false,
   "exportToLS": false,
   "supprToLS": false,
@@ -13,24 +13,25 @@ const debug = {
 // PopupSystem = gestion des popups
 // BuildHoraires = construction des horaires et de la planchette
 
+// BUGS & Retours sur utilisation
+// B: Une fois une sauvegarde créé, le champ de texte qui permet de nommer la planchette disparait jusqu'a ce qu'on reselectionne 'Nouvelle sauvegarde' manuellement (aller sur une autre option puis revenir)
+// B: (Quand une note est éditée?) Plantage occasionnel de la popup de mofification d'horaire
+// R: On pourait demander à l'utilisateur le nom voulu pour la sauvegarde JSON
+// R: On pourrait ajouter un + à la barre de chaque horaire pour ajouter un horaire juste en dessous au lieu d'à la fin du document
+
+
+const version = "1.1.1";
 /* Au chargenment de la page */
 
 window.onload = function(){
+  // console log des élements de debug
   debug.basics?console.log("Chargement de la page"):null
   debug.basics?console.log("Debug activé",debug):null
-  // console log des élements de debug
 
   data=document.querySelector("#data")
- 
-/* Bouton PDF DESACTIVÉ. IMPRESSION EN MEILLEURE QUALITEE VIA CTRL+P*/
-
-
-  // Bouton import JSON
   
-  // document.querySelector('#importJSON').onclick = function(){
-  
-  
-  // Auto modifieurs principaux
+  // on imprime la version de la page
+  document.querySelector("#version").innerHTML = ` - Version ${version}`
   
   // Couleur arrière plan
   i0 = document.querySelector("#i0");
@@ -115,7 +116,7 @@ function showPopup(popupId,action=undefined) {
     }
   }
 
-  if (popupId == 'saveLsPopup') {
+  if (popupId == 'savePopup') {
     // On vérifie si la catégorie de sauvegarde du LS existe
     if (localStorage.getItem('nbt_sauvegardes_planchettes') == undefined) {
       localStorage.setItem('nbt_sauvegardes_planchettes','')
@@ -137,7 +138,7 @@ function showPopup(popupId,action=undefined) {
     }
   }
 
-  if (popupId == 'loadLsPopup') {
+  if (popupId == 'loadPopup') {
     document.querySelector('#loadTypeDefaut').selected = true
     // On vérifie si la catégorie de sauvegarde du LS existe
     if (localStorage.getItem('nbt_sauvegardes_planchettes') == undefined) {
@@ -456,8 +457,13 @@ function duplicateHoraire() {
   debug.buildHoraires?console.log("Dupliquer l'horaire n°",i):null
   // On duplique l'horaire
   let horaireToDuplicate = jsonSave.horaires[i];
+
+  // AJOUTER UN CHOIX POUR DUPLIQUER L'HORAIRE ENTRE A LA SUITE OU A LA FIN
   // On ajoute l'horaire dupliqué après l'horaire d'origine
-  jsonSave.horaires.splice(i+1, 0, JSON.parse(JSON.stringify(horaireToDuplicate)));
+  // jsonSave.horaires.splice(i+1, 0, JSON.parse(JSON.stringify(horaireToDuplicate)));
+  // On ajoute l'horaire dupliqué à la fin
+  jsonSave.horaires.push(JSON.parse(JSON.stringify(horaireToDuplicate)));
+
   // On recharge les horaires
   reloadHoraires();
 }
@@ -1011,11 +1017,11 @@ jsonSave = {
   ]
 }
 jsonDemo = {
-    "entreprise":"SEMITAG",        // Nom entreprise
+    "entreprise":"Keolis Porte des Alpes",        // Nom entreprise
     "dateVigeur":"02/02/2023",        // Date en vigueur fiche
     "service":{
-      "idService":"BUS - 001",     // 14 = Ligne; 002 = Service
-      "periode":"HI2122 - LVH",       // HI = HIVER; 2122 = année debut/fin
+      "idService":"C11-010 (VO18)",     // 14 = Ligne; 002 = Service
+      "periode":"HI2223 - LVH",       // HI = HIVER; 2223 = année debut/fin - LVH = Lundi-Vendredi-Hors vacances
       "typeService":"dfoi",   // coma =  matin, copm = aprèm, dfoi = coupé
     },
     "recap":[
