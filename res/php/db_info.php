@@ -3,5 +3,5 @@
 $servername = "localhost";
 $username = "website";
 $password = "localhost_temp_password";
-$dbname = "network_builder_toolkit";
+$dbname = "nbt_gtfs";
 ?>

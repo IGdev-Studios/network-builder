@@ -10,7 +10,7 @@ if ($conn->connect_error) {
 }
 
 // Requête SQL pour récupérer le contenu de la table (à remplacer par votre propre requête)
-$sql = "SELECT * FROM `liste_arrets`";
+$sql = "SELECT * FROM `stops`";
 $result = $conn->query($sql);
 
 // Vérification s'il y a des résultats

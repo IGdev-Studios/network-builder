@@ -73,6 +73,7 @@ function getListeArrets() {
         if (xhr.status >= 200 && xhr.status < 300) {
             // Conversion de la réponse JSON en objet JavaScript
             var data = JSON.parse(xhr.responseText);
+            console.log(xhr.responseText);
             
             // Utilisation des données récupérées (ex : affichage dans la console)
             console.log(data);

@@ -68,7 +68,8 @@ function reload_lignes(lignes) {
 
         let btnsLigne = document.createElement("div")
         btnsLigne.classList.add("LigneListBtns")
-        btnsLigne.innerHTML = `<button onclick=maxi(${ligne.id})>Editer</button>`
+        btnsLigne.innerHTML = `<button onclick="maxi(${ligne.id})"><img src="./res/svg/pencil.svg" alt="Editer" height="20"></button>`
+        btnsLigne.innerHTML += `<button><img src="./res/svg/delete.svg" alt="Supprimer" height="20"></button>`
         
         conteneur.append(idLigne)
         conteneur.append(couleurLigne)

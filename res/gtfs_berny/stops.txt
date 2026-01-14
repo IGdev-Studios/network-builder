@@ -1,0 +1,17 @@
+stop_id,stop_name,stop_lat,stop_lon
+1,Madeleine,0,0
+2,Stalingrad,0,0
+3,Route du Lac,0,0
+4,Groupe Scolaire Bombardier,0,0
+13,Gare SNCF,0,0
+14,Capuche,0,0
+15,Place des Trèfles,0,0
+16,Mairie,0,0
+17,Gare Routière,0,0
+18,Opalie,0,0
+19,Medilux,0,0
+20,Studio Enigma,0,0
+21,Orfèvre,0,0
+22,Ferme des Collines,0,0
+23,Château d'eau,0,0
+24,Ancien Fort,0,0
