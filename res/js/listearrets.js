@@ -73,7 +73,6 @@ function getListeArrets() {
         if (xhr.status >= 200 && xhr.status < 300) {
             // Conversion de la réponse JSON en objet JavaScript
             var data = JSON.parse(xhr.responseText);
-            console.log(xhr.responseText);
             
             // Utilisation des données récupérées (ex : affichage dans la console)
             console.log(data);
@@ -98,7 +97,12 @@ function getListeArrets() {
 function reload_arrets(arrets) {
     document.querySelector("#arret_list tbody").innerHTML = ""
     arrets.forEach(a => {
-        document.querySelector("#arret_list tbody").innerHTML += `<tr data-arret-id="${a.id}"><td class="arret-id">${a.id}</td> <td class="arret-nom">${a.nom}</td><td class="arret-ville">${a.ville}</td><td class="arret-boutons"><button onclick="fill_edit_form(this)"><img src="./res/svg/pencil.svg" alt="Editer" height="20"></button><button onclick="delete_arret(this)"><img src="./res/svg/delete.svg" alt="Supprimer" height="20"></button></td></tr>`
+        document.querySelector("#arret_list tbody").innerHTML += 
+        `<tr data-arret-id="${a.stop_id}">
+        <td class="arret-id">${a.stop_id}</td>
+        <td class="arret-nom">${a.stop_name}</td>
+        <td class="arret-boutons"><button onclick="fill_edit_form(this)"><img src="./res/svg/pencil.svg" alt="Editer" height="20"></button><button onclick="delete_arret(this)"><img src="./res/svg/delete.svg" alt="Supprimer" height="20"></button></td>
+        </tr>`
     });    
 }
 
